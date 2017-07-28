@@ -1,7 +1,7 @@
 body {
 	display:block;
 	overflow:auto;
-	background:#000 url('images/tvfh-pre/CM-TVFH-Background-001-90Qualityx2080x1660.jpg') top center no-repeat;
+	background:#000 url('../images/tvfh-pre/CM-TVFH-Background-001-90Qualityx2080x1660.jpg') top center no-repeat;
 	background-repeat: no-repeat;
 	background-position:center 0px;
   background-size: cover;
