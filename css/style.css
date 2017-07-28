@@ -24,13 +24,11 @@ body {
   padding-top: 20px;
 }
 
+/* Changing the max-width to a higher value makes the filmstrip image bigger! */
 .filmstrip {
-  /* Changing the max-width to a higher value makes the filmstrip image bigger!
-  */
-
   max-width:130%;
   width: auto\9; /* IE8 compatibility. */
-  height:auto;
+  height: auto;
   margin: 0 -100%;
   border: 0px;
   padding: 0px;
@@ -39,7 +37,7 @@ body {
 .logo {
   max-width:60%;
   width: auto\9; /* IE8 compatibility. */
-  height:auto;
+  height: auto;
   margin: 0 -100%;
 }
 
