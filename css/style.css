@@ -10,8 +10,6 @@ body {
   font-size:36px;
   border:0px!important;
   text-shadow:2px 3px #000;
-  margin:0px;
-  padding:0px;
 }
 
 #filmstripbox {
@@ -72,15 +70,15 @@ body article a:hover {
 
 .biobox {
  display:block;
- background-color:rgba(0,0,0,0.8);
+ background-color:rgba(0,0,0,0.9);
  border-radius: 2px;
- width: 600px;
+ width: 700px;
  height:auto;
  position:relative;
  margin: 0px auto;
- padding: 0px;
+ padding: 10px;
  text-align:center;
- font-size:16px;
+ font-size:20px;
  line-height:150%;
 }
 
@@ -169,6 +167,20 @@ body article a:hover {
   padding-top:10px;
   padding-bottom:10px;
   overflow:hidden;
+}
+
+.eventbox {
+  display:block;
+  position:relative;
+  background:rgba(0,0,0,0.9);
+  min-width:853px;
+  max-width:80%;
+  height:auto;
+  margin:0px auto;
+  padding-top:10px;
+  padding-bottom:10px;
+  overflow:hidden;
+  font-size:24px;
 }
 
 /* This is what centers the Youtube and Soundcloud embeds. */
