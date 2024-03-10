@@ -14,19 +14,56 @@
     .offline {
       color: #ff0000;
     }
+    .subtitle {
+      font-size: 14px;
+      color: #fff;
+    }
+    .subtitle a {
+      color: #ffa500;
+      text-decoration: none;
+    }
+    .subtitle a:hover {
+      text-decoration: underline;
+    }
+    .table {
+      table-layout: fixed;
+    }
+    .table thead th {
+      vertical-align: middle;
+    }
+    .table tbody td {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .table .username-column {
+      width: 25%;
+    }
+    .table .rtspt-column {
+      width: 35%;
+    }
+    .table .mp4-column {
+      width: 35%;
+    }
+    .table .status-column {
+      width: 140px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1 class="text-center mb-4">VRCDN Finder - Find all your friends' VRCDN links!</h1>
+    <p class="subtitle text-center mb-4">
+      Don't see your link in the table? Let me know! Contact me at <a href="https://www.twitter.com/clydemachine">@ClydeMachine</a>.
+    </p>
     <div class="table-responsive">
       <table class="table table-striped table-bordered">
         <thead>
           <tr>
-            <th>Username</th>
-            <th>RTSPT Link</th>
-            <th>MP4 Preview Link</th>
-            <th>Status</th>
+            <th class="username-column">Username</th>
+            <th class="rtspt-column">RTSPT Link</th>
+            <th class="mp4-column">MP4 Preview Link</th>
+            <th class="status-column">Status</th>
           </tr>
         </thead>
         <tbody id="url-table">
