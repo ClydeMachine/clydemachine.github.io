@@ -55,7 +55,10 @@
 </head>
 <body>
   <div class="container">
-    <h1 class="text-center mb-4">VRCDN Finder - Find all your friends' VRCDN links!</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>VRCDN Finder - Find all your friends' VRCDN links!</h1>
+      <button id="check-status-btn" class="btn btn-primary">Check Status</button>
+    </div>
     <p class="subtitle text-center mb-4">
       Don't see your link in the table? Let me know! Contact me at <a href="https://www.twitter.com/clydemachine">@ClydeMachine</a>.
     </p>
@@ -94,6 +97,7 @@
     ];
 
     const urlTable = document.getElementById('url-table');
+    const checkStatusBtn = document.getElementById('check-status-btn');
 
     const rows = urls.map(rtsptLink => {
       const username = rtsptLink.split('/').pop();
@@ -121,11 +125,14 @@
     const batchSize = 4;
 
     const updateStatus = async () => {
+      checkStatusBtn.disabled = true;
+
       const queue = [...rows];
 
       const checkURL = async () => {
         if (queue.length === 0) {
           sortRows();
+          checkStatusBtn.disabled = false;
           return;
         }
 
@@ -189,7 +196,7 @@
       urlTable.appendChild(row);
     });
 
-    updateStatus();
+    checkStatusBtn.addEventListener('click', updateStatus);
   </script>
 </body>
 </html>
