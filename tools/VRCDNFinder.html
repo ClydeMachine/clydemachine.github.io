@@ -80,31 +80,29 @@
   </div>
 
   <script>
-    const urls = [
-      'rtspt://stream.vrcdn.live/live/ayachii',
-      'rtspt://stream.vrcdn.live/live/halo',
-      'rtspt://stream.vrcdn.live/live/clydemachine',
-      'rtspt://stream.vrcdn.live/live/eiji',
-      'rtspt://stream.vrcdn.live/live/zaxman',
-      'rtspt://stream.vrcdn.live/live/gpot',
-      'rtspt://stream.vrcdn.live/live/jivy',
-      'rtspt://stream.vrcdn.live/live/gloomstone',
-      'rtspt://stream.vrcdn.live/live/infsq',
-      'rtspt://stream.vrcdn.live/live/botbrandon',
-      'rtspt://stream.vrcdn.live/live/term',
-      'rtspt://stream.vrcdn.live/live/fyzika',
-      'rtspt://stream.vrcdn.live/live/woodgraves',
-      'rtspt://stream.vrcdn.live/live/turels',
-      'rtspt://stream.vrcdn.live/live/ky3u',
-      'rtspt://stream.vrcdn.live/live/musicenjoyer',
-    ];
+    const urlMap = {
+      'Ayachii': 'rtspt://stream.vrcdn.live/live/ayachii',
+      'Haaylo': 'rtspt://stream.vrcdn.live/live/halo',
+      'Clyde Machine': 'rtspt://stream.vrcdn.live/live/clydemachine',
+      'Eiji': 'rtspt://stream.vrcdn.live/live/eiji',
+      'Zaxman': 'rtspt://stream.vrcdn.live/live/zaxman',
+      'Gpot': 'rtspt://stream.vrcdn.live/live/gpot',
+      'Jivy': 'rtspt://stream.vrcdn.live/live/jivy',
+      'Gloomstone': 'rtspt://stream.vrcdn.live/live/gloomstone',
+      'infinitysquared': 'rtspt://stream.vrcdn.live/live/infsq',
+      'BotBrandon': 'rtspt://stream.vrcdn.live/live/botbrandon',
+      'Term': 'rtspt://stream.vrcdn.live/live/term',
+      'Fyzika': 'rtspt://stream.vrcdn.live/live/fyzika',
+      'Woodgraves': 'rtspt://stream.vrcdn.live/live/woodgraves',
+      'Turels': 'rtspt://stream.vrcdn.live/live/turels',
+      'Giga Strawby': 'rtspt://stream.vrcdn.live/live/musicenjoyer',
+    };
 
     const urlTable = document.getElementById('url-table');
     const checkStatusBtn = document.getElementById('check-status-btn');
 
-    const rows = urls.map(rtsptLink => {
-      const username = rtsptLink.split('/').pop();
-      const mp4Link = `https://stream.vrcdn.live/live/${username}.live.mp4`;
+    const rows = Object.entries(urlMap).map(([username, rtsptLink]) => {
+      const mp4Link = `https://stream.vrcdn.live/live/${rtsptLink.split('/').pop()}.live.mp4`;
 
       const row = document.createElement('tr');
       const usernameCell = document.createElement('td');
