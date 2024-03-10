@@ -146,7 +146,7 @@
 
           const response = await Promise.race([
             fetch(mp4Link),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 4000))
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 8000))
           ]);
 
           if (response.ok) {
