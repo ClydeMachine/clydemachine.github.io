@@ -181,7 +181,7 @@
 
         try {
           // Each request gets a randomly-set delay to distribute them out a little.
-          await new Promise(resolve => setTimeout(resolve, Math.random() * 900 + 100));
+          await new Promise(resolve => setTimeout(resolve, Math.random() * 3600 + 1200));
 
           // Every link has at most TIMEOUT_MS milliseconds to return a response, or is considered offline.
           const TIMEOUT_MS = 10000;
