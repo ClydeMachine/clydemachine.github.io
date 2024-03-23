@@ -220,16 +220,14 @@
         const usernameA = a.row.children[0].textContent.toLowerCase();
         const usernameB = b.row.children[0].textContent.toLowerCase();
         return usernameA.localeCompare(usernameB);
-      }
-      updateTimeoutCount();
-      );
-
+      });
       urlTable.innerHTML = '';
       rows.forEach(({ row }) => {
         urlTable.appendChild(row);
       });
 
       processHighlightRow();
+      updateTimeoutCount();
     };
 
     const retryTimeoutBtn = document.getElementById('retry-timeout-btn');
@@ -295,9 +293,7 @@
         const usernameA = a.row.children[0].textContent.toLowerCase();
         const usernameB = b.row.children[0].textContent.toLowerCase();
         return usernameA.localeCompare(usernameB);
-      }
-      updateTimeoutCount();
-      );
+      });
 
       urlTable.innerHTML = '';
       rows.forEach(({ row }) => {
@@ -305,6 +301,7 @@
       });
 
       processHighlightRow();
+      updateTimeoutCount();
     };
 
     const ONLINE = '🟢 Online';
