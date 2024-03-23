@@ -109,7 +109,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1>VRCDN Finder - Find all your friends' VRCDN links!</h1>
       <button id="check-status-btn" class="btn btn-primary">Check Status</button>
-      <button id="retry-timeout-btn" class="btn btn-secondary ml-2">Retry Timed Out (0)</button>
+      <button id="retry-timeout-btn" class="btn btn-primary">Retry Timed Out Links (0)</button>
     </div>
     <p class="subtitle text-center mb-4">
       Don't see your link in the table? Let me know! Contact me at <a href="https://www.twitter.com/clydemachine">@ClydeMachine</a>.
@@ -234,7 +234,7 @@
 
     const updateTimeoutCount = () => {
       const timeoutCount = rows.filter(row => row.statusCell.textContent === TIMEOUT).length;
-      retryTimeoutBtn.textContent = `Retry Timed Out (${timeoutCount})`;
+      retryTimeoutBtn.textContent = `Retry Timed Out Links (${timeoutCount})`;
 
       if (timeoutCount > 0) {
         retryTimeoutBtn.classList.add('btn-timed-out');
