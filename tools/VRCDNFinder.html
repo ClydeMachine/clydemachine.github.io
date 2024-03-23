@@ -98,6 +98,10 @@
     .highlight {
       border: 1px #ffa500;
     }
+    .btn-timed-out {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
   </style>
 </head>
 <body>
@@ -105,6 +109,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1>VRCDN Finder - Find all your friends' VRCDN links!</h1>
       <button id="check-status-btn" class="btn btn-primary">Check Status</button>
+      <button id="retry-timeout-btn" class="btn btn-primary">Retry Timed Out Links (0)</button>
     </div>
     <p class="subtitle text-center mb-4">
       Don't see your link in the table? Let me know! Contact me at <a href="https://www.twitter.com/clydemachine">@ClydeMachine</a>.
@@ -216,13 +221,71 @@
         const usernameB = b.row.children[0].textContent.toLowerCase();
         return usernameA.localeCompare(usernameB);
       });
-
       urlTable.innerHTML = '';
       rows.forEach(({ row }) => {
         urlTable.appendChild(row);
       });
 
       processHighlightRow();
+      updateTimeoutCount();
+    };
+
+    const retryTimeoutBtn = document.getElementById('retry-timeout-btn');
+
+    const updateTimeoutCount = () => {
+      const timeoutCount = rows.filter(row => row.statusCell.textContent === TIMEOUT).length;
+      retryTimeoutBtn.textContent = `Retry Timed Out Links (${timeoutCount})`;
+
+      if (timeoutCount > 0) {
+        retryTimeoutBtn.classList.add('btn-timed-out');
+      } else {
+        retryTimeoutBtn.classList.remove('btn-timed-out');
+      }
+    };
+
+    const retryTimedOutLinks = async () => {
+      const timedOutRows = rows.filter(row => row.statusCell.textContent === TIMEOUT);
+
+      for (const { mp4Link, statusCell } of timedOutRows) {
+        statusCell.textContent = '⏳ Checking...';
+
+        try {
+          await new Promise(resolve => setTimeout(resolve, Math.random() * 3600 + 1200));
+
+          console.time(mp4Link);
+          const TIMEOUT_MS = 16200;
+          const response = await Promise.race([
+            fetch(mp4Link),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), TIMEOUT_MS))
+          ]);
+
+          console.timeEnd(mp4Link);
+
+          if (response.ok) {
+            statusCell.textContent = ONLINE;
+            statusCell.classList.add('online');
+            statusCell.setAttribute('title', 'Online');
+            console.log(`${mp4Link} - Online`);
+          } else {
+            console.log(response);
+            statusCell.textContent = `${OFFLINE} ${response.status}`;
+            statusCell.classList.add('offline');
+            statusCell.setAttribute('title', `HTTP error: status: ${response.status}`);
+            console.log(`${mp4Link} - HTTP error: status: ${response.status}`);
+          }
+        } catch (error) {
+          console.timeEnd(mp4Link);
+
+          console.log(error);
+          statusCell.textContent = TIMEOUT;
+          statusCell.classList.add('offline');
+          statusCell.setAttribute('title', 'Offline - Timed Out');
+          console.log(`${mp4Link} - Offline - Timed Out`);
+        }
+      }
+
+      updateTimeoutCount();
+      sortRowsByStatus();
     };
 
     const sortRowsAlphabetically = () => {
@@ -238,6 +301,7 @@
       });
 
       processHighlightRow();
+      updateTimeoutCount();
     };
 
     const ONLINE = '🟢 Online';
@@ -305,6 +369,8 @@
       for (let i = 0; i < batchSize; i++) {
         checkURL();
       }
+
+      updateTimeoutCount();
     };
 
     const stripNonAlphanumeric = (str) => {
@@ -332,6 +398,7 @@
       rows.forEach(({ row }) => {
         urlTable.appendChild(row);
       });
+      updateTimeoutCount();
     };
 
     const processHighlightRow = () => {
@@ -357,6 +424,7 @@
     processHighlightRow();
 
     checkStatusBtn.addEventListener('click', updateStatus);
+    retryTimeoutBtn.addEventListener('click', retryTimedOutLinks);
 
     const nLinksTracked = Object.keys(urlMap).length;
     console.log(`Tracking ${nLinksTracked} VRCDN links!`);
