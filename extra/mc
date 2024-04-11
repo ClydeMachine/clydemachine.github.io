@@ -117,6 +117,7 @@ function clear_exclusions_from_inventory()
   local exclusions = {
     "minecraft:tuff",
     "minecraft:cobbled_deepslate",
+    "minecraft:cobblestone",
     "minecraft:redstone",
     "minecraft:dirt",
   }
