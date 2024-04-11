@@ -99,11 +99,15 @@ end
 function drop_if_name_matches(slot_ix, exclusions, curr_item_data)
   turtle.select(slot_ix)
   local curr_item_data = turtle.getItemDetail()
-  for _, exclusion_name in ipairs(exclusions) do
-    if curr_item_data["name"] == exclusion_name then
-      turtle.drop()
-      return -- No need to check the rest of the exclusions for this slot.
+  if curr_item_data then
+    for _, exclusion_name in ipairs(exclusions) do
+      if curr_item_data["name"] == exclusion_name then
+        turtle.drop()
+        return -- No need to check the rest of the exclusions for this slot.
+      end
     end
+  else
+    return -- No item in this slot!
   end
 end
 
