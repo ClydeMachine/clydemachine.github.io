@@ -1,2 +1,2 @@
-wget https://www.clydemachine.com/extra/mc
-mc
+shell.run("wget https://www.clydemachine.com/extra/mc")
+shell.run("mc")
