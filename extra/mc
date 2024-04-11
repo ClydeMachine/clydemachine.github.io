@@ -252,6 +252,7 @@ print("Beginning MC - main.")
 -- https://tweaked.cc/module/turtle.html#v:inspect
 
 find_and_equip_tool()
+find_and_consume_fuel()
 
 -- move_strategy_nascar(32)
 -- move_strategy_large_steps(1000, global_step_width)
