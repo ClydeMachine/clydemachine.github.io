@@ -7,6 +7,19 @@ print("Beginning MC.")
 
 -- Functions lib
 
+function find_and_equip_tool()
+  for i = 1, 16 do
+    turtle.select(i)
+    local attempt, err = turtle.equipLeft()
+    if attempt then
+      print("Equipped item at " .. i)
+      break
+    else
+      print("Could not equip at " .. i .. " because error " .. err)
+    end
+  end
+end
+
 local refuelAt = 10
 
 function should_refuel(should_refuel)
@@ -46,10 +59,42 @@ function Job:getJobDefinition()
   return self.job_definition
 end
 
+-- Emergency brake for the turtle.
+function stop()
+  print("Emergency brake - shutting down in a few minutes.")
+  os.sleep(120)
+  os.shutdown()
+end
+
+-- Move in a square and clear blocks out.
+function move_strategy_nascar(limit)
+  for step = 1, limit do
+    turtle.turnLeft()
+    turtle.dig("left") -- Always use left tool.
+    turtle.suck()
+    local is_blocked = turtle.detect()
+    if is_blocked then
+      print("We are blocked by something we couldn't break!")
+      turtle.up()
+      stop()
+    end
+    -- Not blocked - move forward.
+    turtle.forward()
+    if step % 4 == 0 then
+      turtle.digDown()
+      turtle.down()
+    end
+  end
+end
+
 print("Beginning MC - main.")
 
 -- Main loop goes here
-
-should_refuel(true)
-
+-- https://claude.ai/chat/5a5ac357-24a1-43a0-9d65-79586b5a58f1
+-- https://tweaked.cc/module/turtle.html#v:inspect
+for iter = 1, 100 do
+  find_and_equip_tool()
+  should_refuel(true)
+  move_strategy_nascar(16)
+end
 print("Exiting MC.")
