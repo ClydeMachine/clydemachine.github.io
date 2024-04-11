@@ -3,6 +3,7 @@
 -- is user-defined but essentially is aimed at the user defining the blocks
 -- to ignore (leave as entities) and bring back everything else.
 
+-- range(-56, -52) are the y-coords for diamonds apparently.
 local global_step_width = 2
 
 print("Beginning MC.")
@@ -91,6 +92,40 @@ function break_forward()
   turtle.forward()
 end
 
+function break_forward_up_and_down()
+  turtle.dig("left") -- Always use left tool.
+  turtle.digUp("left") -- Dig up so a human can follow along.
+  turtle.digDown("left") -- Dig up so a human can follow along.
+  turtle.suck()
+  turtle.suckUp()
+  turtle.suckDown()
+  local is_blocked = turtle.detect()
+  if is_blocked then
+    print("We are blocked by something we couldn't break!")
+    -- Suppose we hit gravel? We can keep digging but need to keep track
+    -- of whether we successfully moved or not.
+
+    -- Try up and over.
+    if is_still_blocked = turtle.detectUp() then
+      stop()
+    end
+    turtle.up()
+    if is_still_blocked = turtle.detect() then
+      stop()
+    end
+    turtle.forward()
+    if is_still_blocked = turtle.detectDown() then
+      stop()
+    end
+    turtle.down()
+    if is_still_blocked = turtle.detect()
+      stop()
+    end
+  end
+  -- Not blocked - move forward.
+  turtle.forward()
+end
+
 function break_down()
   turtle.digDown("left") -- Always use left tool.
   turtle.digUp("left") -- Dig up so a human can follow along.
@@ -140,6 +175,28 @@ function move_strategy_large_steps(y_limit, step_width)
   end
 end
 
+function move_strategy_three_up_wide(distance_limit, step_width)
+  -- On the same y_level, strip mine wide and deep.
+  for step = 1, distance_limit do
+    should_refuel(true)
+    turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
+    for leftward = 1, step_width do
+      break_forward_up_and_down()
+    end
+    -- We are now at the end of a step, facing left of where we started.
+    turtle.turnRight() -- Facing forward once again
+    break_forward() -- Now standing over the next step.
+    turtle.turnRight() -- Face down the rightward step.
+    for rightward = 1, step_width do
+      break_forward_up_and_down()
+    end
+    -- We are now facing right of where we started.
+    turtle.turnLeft()
+    break_forward() -- Now over the next leftward step.
+    -- And we're ready to start the next.
+  end
+end
+
 print("Beginning MC - main.")
 
 -- Main loop goes here
@@ -149,6 +206,7 @@ print("Beginning MC - main.")
 find_and_equip_tool()
 
 -- move_strategy_nascar(32)
-move_strategy_large_steps(1000, global_step_width)
+-- move_strategy_large_steps(1000, global_step_width)
+move_strategy_three_up_wide(1000, global_step_width)
 
 print("Exiting MC.")
