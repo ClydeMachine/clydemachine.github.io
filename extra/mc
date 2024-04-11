@@ -6,6 +6,7 @@
 -- range(-56, -52) are the y-coords for diamonds apparently.
 local global_step_width = 4
 local global_distance_limit = 100
+local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 
 print("Beginning MC.")
 
@@ -189,7 +190,7 @@ end
 function move_strategy_nascar(limit)
   -- step can be analogous to one Y level if you only go down once.
   for step = 1, limit do
-    should_refuel(true)
+    should_refuel(global_should_refuel)
     turtle.turnLeft()
     break_forward()
     break_forward()
@@ -200,7 +201,7 @@ end
 function move_strategy_large_steps(y_limit, step_width)
   -- step can be analogous to one Y level if you only go down once per step.
   for step = 1, y_limit do
-    should_refuel(true)
+    should_refuel(global_should_refuel)
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first step
     for leftward = 1, step_width do
       break_forward()
@@ -224,7 +225,7 @@ end
 function move_strategy_three_up_wide(distance_limit, step_width)
   -- On the same y_level, strip mine wide and deep.
   for step = 1, distance_limit do
-    should_refuel(true)
+    should_refuel(global_should_refuel)
     clear_exclusions_from_inventory()
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
     for leftward = 1, step_width do
