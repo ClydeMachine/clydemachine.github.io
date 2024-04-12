@@ -88,6 +88,31 @@ function Job:getJobDefinition()
   return self.job_definition
 end
 
+-- Just a fun one, notify if the turtle has encountered an interesting block.
+function report_on_interesting_block(step_ix)
+  local interesting_blocks = {
+    "minecraft:diamond_ore",
+    "minecraft:iron_ore",
+  }
+
+  local _, forward_detail = turtle.inspect()
+  local _, above_detail = turtle.inspectUp()
+  local _, below_detail = turtle.inspectDown()
+  local blocks_surrounding = {
+    "ahead": forward_detail["name"},
+    "above": above_detail["name"},
+    "below": below_detail["name"},
+  }
+  for k, v in pairs(blocks_surrounding) do
+    for _, interesting_block in ipairs(interesting_blocks) do
+      if v == interesting_block then
+        log(string.format("Block %v discovered %k after %s steps!", v, k, step_ix))
+      end
+    end
+  end
+
+end
+
 -- Emergency brake for the turtle.
 function stop()
   turtle.turnLeft()
@@ -174,7 +199,8 @@ function break_forward()
   turtle.forward()
 end
 
-function break_forward_up_and_down()
+function break_forward_up_and_down(step_ix)
+  report_on_interesting_block(step_ix)
   turtle.dig("left") -- Always use left tool.
   turtle.digUp("left") -- Dig up so a human can follow along.
   turtle.digDown("left") -- Dig up so a human can follow along.
@@ -248,18 +274,18 @@ function move_strategy_three_up_wide(distance_limit, step_width)
     clear_exclusions_from_inventory()
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
     for leftward = 1, step_width do
-      break_forward_up_and_down()
+      break_forward_up_and_down(step)
     end
     -- We are now at the end of a step, facing left of where we started.
     turtle.turnRight() -- Facing forward once again
-    break_forward_up_and_down() -- Now standing over the next step.
+    break_forward_up_and_down(step) -- Now standing over the next step.
     turtle.turnRight() -- Face down the rightward step.
     for rightward = 1, step_width do
-      break_forward_up_and_down()
+      break_forward_up_and_down(step)
     end
     -- We are now facing right of where we started.
     turtle.turnLeft()
-    break_forward_up_and_down() -- Now over the next leftward step.
+    break_forward_up_and_down(step) -- Now over the next leftward step.
     -- And we're ready to start the next.
   end
 end
