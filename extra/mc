@@ -4,7 +4,7 @@
 -- to ignore (leave as entities) and bring back everything else.
 
 -- range(-56, -52) are the y-coords for diamonds apparently.
-local global_step_width = 4
+local global_step_width = 3
 local global_distance_limit = 100
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 
