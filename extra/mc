@@ -7,50 +7,66 @@
 local global_step_width = 3
 local global_distance_limit = 100
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
-
-print("Beginning MC.")
+local refuelAt = 10
 
 -- Functions lib
+
+function log(msg)
+  local webhook_url = "https://discord.com/api/webhooks/1228296506633883698/uy6rxXwuvkTQbdfRGCnPCnBIN7LfPWqP7jmwIKoehMtR3G4TrL7ZEOECo8PZt3rFZKXG"
+  local headers = {["Content-Type"] = "application/json"}
+  local c_id = os.getComputerLabel()
+
+  local body = c_id .. ": " .. msg
+  print(body)  -- Always print anything we'll be sending out.
+  contents = string.format('{"content": "%s"}', body)
+
+  -- You have two options here: sync request or async request.
+  -- http.post(webhook_url, contents, headers)
+  http.request(webhook_url, contents, headers, false, "POST", true, 1)
+end
+
+log("Beginning MC.")  -- Immediate test.
 
 function find_and_equip_tool()
   for i = 1, 16 do
     turtle.select(i)
     local attempt, err = turtle.equipLeft()
     if attempt then
-      print("Equipped item at " .. i)
+      log("Equipped item at " .. i)
       break
     else
-      print("Could not equip at " .. i .. " because error " .. err)
+      log("Could not equip at " .. i .. " because error " .. err)
     end
   end
 end
-
-local refuelAt = 10
 
 function find_and_consume_fuel()
   for i = 1, 16 do
     turtle.select(i)
     local attempt, err = turtle.refuel()
   end
+  local fuel_level = turtle.getFuelLevel()
+  log(string.format("Fuel level now at: %s", fuel_level))
 end
 
 function should_refuel(refuel_if_low)
   local curr_fuel_level = turtle.getFuelLevel()
   if curr_fuel_level < refuelAt then
-    print("Need to refuel, level is at " .. curr_fuel_level)
+    log("Needing a refuel, level is at " .. curr_fuel_level)
 
     -- Need to refuel - should it happen now or later?
     if refuel_if_low then
-      print("Refueling!")
+      log("Refueling!")
       find_and_consume_fuel()
-      print("Refueled to " .. turtle.getFuelLevel())
+      log("Refueled to " .. turtle.getFuelLevel())
       -- Could be out of fuel.
       if turtle.getFuelLevel() < refuelAt then
-        print("Refueling failed! Stopping.")
+        log("Refueling failed! Stopping.")
         stop()
       end
     else
-      print("No need to refuel, already at " .. curr_fuel_level)
+      log("Fuel level too low and not allowed to refuel, stopping.")
+      stop()
     end
 
   end
@@ -76,8 +92,8 @@ end
 function stop()
   turtle.turnLeft()
   turtle.turnLeft()  -- Turn the turtle around to make it obvious something is up.
-  print("Emergency brake - shutting down in a few minutes.")
-  os.sleep(120)
+  log("We are stopped. Emergency brake - shutting down.")
+  os.sleep(4)
   os.shutdown()
 end
 
@@ -128,7 +144,7 @@ function clear_exclusions_from_inventory()
 end
 
 function handle_gravel()
-  print("Checking if we are blocked by gravel...")
+  log("Checking if we are blocked by gravel...")
   -- if gravel, we basically just keep mining in place til it's gone.
   -- No stack of gravel naturally spawned will be more than 10 tall.
   for gravelstep = 1, 10 do
@@ -138,6 +154,7 @@ function handle_gravel()
       turtle.suck()
     else
       -- All clear!
+      log("Possible gravel blockage resolved.")
       break
     end
   end
@@ -149,8 +166,9 @@ function break_forward()
   turtle.suck()
   local is_blocked = turtle.detect()
   if is_blocked then
-    print("We are blocked by something we couldn't break!")
-    stop()
+    log("We are blocked by something!")
+    handle_gravel()
+    -- handle_bedrock()
   end
   -- Not blocked - move forward.
   turtle.forward()
@@ -165,7 +183,7 @@ function break_forward_up_and_down()
   turtle.suckDown()
   local is_blocked = turtle.detect()
   if is_blocked then
-    print("We are blocked by something!")
+    log("We are blocked by something!")
     handle_gravel()
     -- handle_bedrock()
   end
@@ -179,8 +197,9 @@ function break_down()
   turtle.suckDown()
   local is_blocked = turtle.detectDown()
   if is_blocked then
-    print("We are blocked by something we couldn't break!")
-    stop()
+    log("We are blocked by something!")
+    handle_gravel()
+    -- handle_bedrock()
   end
   -- Not blocked - move down.
   turtle.down()
@@ -245,7 +264,7 @@ function move_strategy_three_up_wide(distance_limit, step_width)
   end
 end
 
-print("Beginning MC - main.")
+log("Beginning MC - main.")
 
 -- Main loop goes here
 -- https://claude.ai/chat/5a5ac357-24a1-43a0-9d65-79586b5a58f1
@@ -258,4 +277,4 @@ find_and_consume_fuel()
 -- move_strategy_large_steps(1000, global_step_width)
 move_strategy_three_up_wide(global_distance_limit, global_step_width)
 
-print("Exiting MC.")
+log("Exiting MC.")
