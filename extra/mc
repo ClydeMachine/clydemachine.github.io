@@ -28,15 +28,22 @@ end
 log("Beginning MC.")  -- Immediate test.
 
 function find_and_equip_tool()
+  local valid_tool = "minecraft:diamond_pickaxe"
   for i = 1, 16 do
     turtle.select(i)
-    local attempt, err = turtle.equipLeft()
-    if attempt then
-      log("Equipped item at " .. i)
-      break
-    else
-      log("Could not equip at " .. i .. " because error " .. err)
+    local found_tool = turtle.getItemDetail(i)
+    -- Check if we have a diamond pickaxe or other compatible tool, and if so, equip it.
+    if found_tool and found_tool["name"] == valid_tool then
+      log("Found a valid tool to use in slot " .. i .. ": "  .. found_tool["name"])
+      local attempt, err = turtle.equipLeft()
+      if attempt then
+        log("Equipped item at " .. i)
+        break
+      else
+        log("Could not equip at " .. i .. " because error " .. err)
+      end
     end
+
   end
 end
 
