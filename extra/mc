@@ -40,17 +40,22 @@ function find_and_equip_tool()
   end
 end
 
+function report_fuel_level()
+  local fuel_level = turtle.getFuelLevel()
+  log(string.format("Fuel level now at: %s", fuel_level))
+  return fuel_level
+end
+
 function find_and_consume_fuel()
   for i = 1, 16 do
     turtle.select(i)
     local attempt, err = turtle.refuel()
   end
-  local fuel_level = turtle.getFuelLevel()
-  log(string.format("Fuel level now at: %s", fuel_level))
+  report_fuel_level()
 end
 
 function should_refuel(refuel_if_low)
-  local curr_fuel_level = turtle.getFuelLevel()
+  local curr_fuel_level = report_fuel_level()
   if curr_fuel_level < refuelAt then
     log("Needing a refuel, level is at " .. curr_fuel_level)
 
