@@ -31,8 +31,13 @@ function collect_oil()
 end
 
 -- Check directly ahead of us for oil to pick up.
-function attempt_oil_gather()
+function attempt_oil_gather(debug)
+  debug = debug or false
   local oil_block_name = "minecraft:oil"
+  if debug then
+    oil_block_name = "minecraft:lava"
+    common.log("Attempting to pick debug block " .. oil_block_name)
+  end
   local is_oil = detect_block(oil_block_name)
 
   if is_oil then
@@ -53,7 +58,8 @@ function attempt_oil_gather()
 end
 
 -- Given a distance limit, cover a nxn square to find and pick up liquids.
-function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width)
+function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, debug)
+  debug = debug or false
   local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
   if not did_find_bucket then
     log("We have no bucket to use! Stopping.")
@@ -63,15 +69,15 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width)
   -- On the same y_level, find oil and pick it up.
   for step = 1, distance_limit do
     common.should_refuel(global_should_refuel)
-    clear_exclusions_from_inventory()
+    common.clear_exclusions_from_inventory()
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
     for leftward = 1, step_width do
-      attempt_oil_gather()
+      attempt_oil_gather(debug)
       common.forward(step)
     end
     -- We are now at the end of a step, facing left of where we started.
     turtle.turnRight() -- Facing forward once again
-    attempt_oil_gather()
+    attempt_oil_gather(debug)
     common.forward(step) -- Now standing over the next step.
 
     -- Time to turn around and start another layer?
@@ -88,12 +94,12 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width)
       -- do a full square, we'd just zigzag and mess it up.
       turtle.turnRight() -- Face down the rightward step.
       for rightward = 1, step_width do
-        attempt_oil_gather()
+        attempt_oil_gather(debug)
         common.forward(step)
       end
       -- We are now facing right of where we started.
       turtle.turnLeft()
-      attempt_oil_gather()
+      attempt_oil_gather(debug)
       common.forward(step) -- Now over the next leftward step.
       -- And we're ready to start the next.
     end
@@ -113,7 +119,6 @@ common.find_and_consume_fuel()
 -- Debugging
 common.find_and_select_matching_item(bucket_item_name, true)
 
-
-move_strategy_three_up_wide__pick_up_liquids(global_distance_limit, global_step_width)
+move_strategy_by_layer__pick_up_liquids(global_distance_limit, global_step_width)
 
 common.log("Exiting oilrig.")
