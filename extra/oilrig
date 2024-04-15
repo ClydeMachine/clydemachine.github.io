@@ -99,7 +99,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
       turtle.turnLeft()
       local could_move = common.down(step)
       if could_move then
-        y_change -= 1
+        y_change = y_change - 1
       end
     else
       -- We do this in the else block because otherwise we wouldn't
