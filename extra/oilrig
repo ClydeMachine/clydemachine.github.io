@@ -68,7 +68,7 @@ function attempt_oil_gather(debug)
 end
 
 -- Given a distance limit, cover a nxn square to find and pick up liquids.
-function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, debug)
+function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, depth_limit, debug)
   debug = debug or false
   local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
   if not did_find_bucket then
@@ -81,10 +81,10 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
   -- of the oil field, not in it proper.
   common.forward()
 
-  for y_step = 0, global_depth_limit, -1 do
-    common.log("y_step now at " .. y_step .. "/" .. global_depth_limit)
+  for y_step = 0, depth_limit - 1, -1 do
+    common.log("y_step now at " .. y_step .. "/" .. depth_limit)
     -- On the same y_level, find oil and pick it up.
-    for step = 0, distance_limit do
+    for step = 0, distance_limit - 1 do
       common.should_refuel(global_should_refuel)
       common.clear_exclusions_from_inventory()
       turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
@@ -98,6 +98,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
 
       -- Time to turn around and start another layer?
       if distance_limit - step == 1 then
+        log("Time to turn around!")
         -- We are on the last zag of this zigzag. :D
         local could_move = common.down(step)
         if could_move then
@@ -110,7 +111,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
         -- We do this in the else block because otherwise we wouldn't
         -- do a full square, we'd just zigzag and mess it up.
         turtle.turnRight() -- Face down the rightward step.
-        for rightward = 0, step_width do
+        for rightward = 0, step_width - 1 do
           attempt_oil_gather(debug)
           common.forward(step)
         end
@@ -136,6 +137,6 @@ common.find_and_consume_fuel()
 -- Debugging
 common.find_and_select_matching_item(bucket_item_name, true)
 
-move_strategy_by_layer__pick_up_liquids(global_distance_limit, global_step_width)
+move_strategy_by_layer__pick_up_liquids(global_distance_limit, global_step_width, global_depth_limit)
 
 common.log("Exiting oilrig.")
