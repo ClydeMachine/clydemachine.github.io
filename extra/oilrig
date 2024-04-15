@@ -5,13 +5,13 @@
 -- Example oil location: x=45, z=708, y=62
 
 local global_step_width = 3
-local global_distance_limit = 100
+local global_distance_limit = 2
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local y_change = 0  -- Should be updated at every altitude change.
 
 local interesting_blocks = {
-  "minecraft:oil",
-  "minecraft:lava",
+  "ad_astra:oil",
+  "ad_astra:flowing_oil",
 }
 local bucket_item_name = "minecraft:bucket"
 
@@ -30,15 +30,22 @@ function collect_oil()
   end
 end
 
+function detect_any_oil_blocks(oil_block_names)
+  for _, oil_block_name in ipairs(oil_block_names) do
+    if is_oil = detect_block(oil_block_name) then
+      -- Return on first success.
+      return is_oil
+    end
+  end
+  -- No matches, not oil.
+  return false
+end
+
 -- Check directly ahead of us for oil to pick up.
 function attempt_oil_gather(debug)
+  -- TODO Remove as unused?
   debug = debug or false
-  local oil_block_name = "minecraft:oil"
-  if debug then
-    oil_block_name = "minecraft:lava"
-    common.log("Attempting to pick debug block " .. oil_block_name)
-  end
-  local is_oil = detect_block(oil_block_name)
+  local is_oil = detect_any_oil_blocks(interesting_blocks)
 
   if is_oil then
     -- We have oil. Do we have a bucket for it?
@@ -65,6 +72,11 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
     common.log("We have no bucket to use! Stopping.")
     common.stop()
   end
+
+  -- If a bucket was found, we'll know the turtle is ready when it steps forward into the
+  -- oil field. This implies of course that you always start the turtle on the sidelines
+  -- of the oil field, not in it proper.
+  common.forward()
 
   -- On the same y_level, find oil and pick it up.
   for step = 1, distance_limit do
