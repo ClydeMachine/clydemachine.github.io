@@ -1,0 +1,111 @@
+-- Purpose of this script is for a CC Tweaked Minecraft Turtle to collect
+-- oil blocks out on the ocean. While it should not need to clear any blocks to do this,
+-- the turtle will equip a tool anyway.
+
+-- Example oil location: x=45, z=708, y=62
+
+local global_step_width = 3
+local global_distance_limit = 100
+local global_should_refuel = false -- Set to true for a big run, false to collect coal!
+local y_change = 0  -- Should be updated at every altitude change.
+
+local interesting_blocks = {
+  "minecraft:oil",
+  "minecraft:lava",
+}
+
+local common = require("common")
+
+-- World interaction functions
+function return_home()
+  common.log(string.format("Returning home across %s Y levels."))
+  if y_change > 1 then
+    -- We went up, go back down.
+    for i = 0, y_change do
+      turtle.down()
+    end
+    common.log("Returned to start! Stopping.")
+    return common.stop()
+  end
+  if y_change < 0 then
+    -- We went down, go back up.
+    for i = 0, y_change, -1 do
+      turtle.up()
+    end
+  end
+  common.log("Requesting to return home but no y_change, stopping.")
+  return common.stop()
+end
+
+-- Check directly ahead of us for oil to pick up.
+function attempt_oil_gather()
+  local oil_block_name = "minecraft:oil"
+  local is_oil = detect_block(oil_block_name)
+
+  if is_oil then
+    -- We have oil. Do we have a bucket for it?
+    log("Found oil! Collecting...")
+    stop()
+  end
+
+  if full_tank then
+    common.log("Tank is full - returning home!")
+    return return_home()
+  end
+end
+
+-- Given a distance limit, cover a nxn square to find and pick up liquids.
+function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width)
+  -- On the same y_level, find oil and pick it up.
+  for step = 1, distance_limit do
+    common.should_refuel(global_should_refuel)
+    clear_exclusions_from_inventory()
+    turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
+    for leftward = 1, step_width do
+      attempt_oil_gather()
+      common.forward(step)
+    end
+    -- We are now at the end of a step, facing left of where we started.
+    turtle.turnRight() -- Facing forward once again
+    attempt_oil_gather()
+    common.forward(step) -- Now standing over the next step.
+
+    -- Time to turn around and start another layer?
+    if step % step_width == 0 then
+      -- We have gone as many steps over as we go wide.
+      turtle.turnLeft()
+      turtle.turnLeft()
+      local could_move = common.down(step)
+      if could_move then
+        y_change -= 1
+      end
+    else
+      -- We do this in the else block because otherwise we wouldn't
+      -- do a full square, we'd just zigzag and mess it up.
+      turtle.turnRight() -- Face down the rightward step.
+      for rightward = 1, step_width do
+        attempt_oil_gather()
+        common.forward(step)
+      end
+      -- We are now facing right of where we started.
+      turtle.turnLeft()
+      attempt_oil_gather()
+      common.forward(step) -- Now over the next leftward step.
+      -- And we're ready to start the next.
+    end
+
+  end
+end
+
+common.log("Beginning oilrig - main.")
+
+-- Main loop goes here
+-- https://claude.ai/chat/5a5ac357-24a1-43a0-9d65-79586b5a58f1
+-- https://tweaked.cc/module/turtle.html#v:place
+
+common.find_and_equip_tool()
+common.find_and_consume_fuel()
+
+move_strategy_three_up_wide__pick_up_liquids(global_distance_limit, global_step_width)
+
+common.log("Exiting oilrig.")

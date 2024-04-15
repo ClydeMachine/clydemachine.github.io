@@ -1,3 +1,5 @@
 shell.run("delete mc")
+shell.run("wget https://www.clydemachine.com/extra/common")
 shell.run("wget https://www.clydemachine.com/extra/mc")
+shell.run("wget https://www.clydemachine.com/extra/oilrig")
 print("Ready to go!")
