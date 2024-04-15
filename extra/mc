@@ -21,7 +21,7 @@ local interesting_blocks = {
 
 local common = require("common")
 
-log("Beginning mc.")
+common.log("Beginning mc.")
 
 function detect_gravel()
   local gravel_block_name = "minecraft:gravel"
