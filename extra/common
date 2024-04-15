@@ -26,14 +26,14 @@ function common.find_and_select_matching_item(item_name, verbose_mode)
     local found_item = turtle.getItemDetail(i)
     -- Check if we have a diamond pickaxe or other compatible tool, and if so, equip it.
     if found_item and found_item["name"] == item_name then
-      log("Found a valid " .. found_item .. " to use in slot " .. i .. ".")
+      common.log("Found a valid " .. found_item .. " to use in slot " .. i .. ".")
       -- Just an item select so nothing else to do.
       return true
     elseif found_item and verbose_mode then
-      log("find_and_select_matching_item (verbose): Slot " .. i .. " " .. found_item["name"])
+      common.log("find_and_select_matching_item (verbose): Slot " .. i .. " " .. found_item["name"])
     end
   end
-  log("Did not find a match for item " .. item_name .. "!")
+  common.log("Did not find a match for item " .. item_name .. "!")
   return false
 end
 
@@ -44,13 +44,13 @@ function common.find_and_equip_tool(valid_tool)
     local found_tool = turtle.getItemDetail(i)
     -- Check if we have a diamond pickaxe or other compatible tool, and if so, equip it.
     if found_tool and found_tool["name"] == valid_tool then
-      log("Found a valid tool to use in slot " .. i .. ": "  .. found_tool["name"])
+      common.log("Found a valid tool to use in slot " .. i .. ": "  .. found_tool["name"])
       local attempt, err = turtle.equipLeft()
       if attempt then
-        log("Equipped item at " .. i)
+        common.log("Equipped item at " .. i)
         break
       else
-        log("Could not equip at " .. i .. " because error " .. err)
+        common.log("Could not equip at " .. i .. " because error " .. err)
       end
     end
   end
@@ -58,18 +58,18 @@ end
 
 function common.report_fuel_level()
   local fuel_level = turtle.getFuelLevel()
-  log(string.format("Fuel level now at: %s", fuel_level))
+  common.log(string.format("Fuel level now at: %s", fuel_level))
   return fuel_level
 end
 
 function common.return_home(y_change)
-  log(string.format("Returning home across %s Y levels.", y_change))
+  common.log(string.format("Returning home across %s Y levels.", y_change))
   if y_change > 1 then
     -- We went up, go back down.
     for i = 0, y_change do
       turtle.down()
     end
-    log("Returned to start! Stopping.")
+    common.log("Returned to start! Stopping.")
     return stop()
   end
   if y_change < 0 then
@@ -78,7 +78,7 @@ function common.return_home(y_change)
       turtle.up()
     end
   end
-  log("Requesting to return home but no y_change, stopping.")
+  common.log("Requesting to return home but no y_change, stopping.")
   return stop()
 end
 
@@ -86,7 +86,7 @@ end
 function common.stop()
   turtle.turnLeft()
   turtle.turnLeft()  -- Turn the turtle around to make it obvious something is up.
-  log("We are stopped. Emergency brake - shutting down.")
+  common.log("We are stopped. Emergency brake - shutting down.")
   os.sleep(4)
   os.shutdown()
 end
@@ -117,20 +117,20 @@ function common.should_refuel(refuel_if_low, refuel_at)
   refuel_at = refuel_at or 10
   local curr_fuel_level = common.report_fuel_level()
   if curr_fuel_level < refuel_at then
-    log("Needing a refuel, level is at " .. curr_fuel_level)
+    common.log("Needing a refuel, level is at " .. curr_fuel_level)
 
     -- Need to refuel - should it happen now or later?
     if refuel_if_low then
-      log("Refueling!")
+      common.log("Refueling!")
       find_and_consume_fuel()
-      log("Refueled to " .. turtle.getFuelLevel())
+      common.log("Refueled to " .. turtle.getFuelLevel())
       -- Could be out of fuel.
       if turtle.getFuelLevel() < refuel_at then
-        log("Refueling failed! Stopping.")
+        common.log("Refueling failed! Stopping.")
         stop()
       end
     else
-      log("Fuel level too low and not allowed to refuel, stopping.")
+      common.log("Fuel level too low and not allowed to refuel, stopping.")
       stop()
     end
   end
@@ -149,7 +149,7 @@ function common.report_on_interesting_block(step_ix, interesting_blocks)
   for k, v in pairs(blocks_surrounding) do
     for _, interesting_block in ipairs(interesting_blocks) do
       if v == interesting_block then
-        log(string.format("Block %s discovered %s after %s steps!", v, k, step_ix))
+        common.log(string.format("Block %s discovered %s after %s steps!", v, k, step_ix))
       end
     end
   end
@@ -160,9 +160,9 @@ function common.forward(steps)
   local could_move = turtle.forward()
   if not could_move then
     if not steps then
-      log("Could not move.")
+      common.log("Could not move.")
     else
-      log("Could not move after " .. steps .. " steps.")
+      common.log("Could not move after " .. steps .. " steps.")
     end
 
     -- TODO Actually handle the collision.
@@ -178,9 +178,9 @@ function common.down(steps)
   local could_move = turtle.down()
   if not could_move then
     if not steps then
-      log("Could not move down.")
+      common.log("Could not move down.")
     else
-      log("Could not move down after " .. steps .. " steps.")
+      common.log("Could not move down after " .. steps .. " steps.")
     end
     -- TODO Actually handle the collision.
     stop()
