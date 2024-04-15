@@ -62,18 +62,18 @@ function common.report_fuel_level()
   return fuel_level
 end
 
-function common.return_home(y_change)
-  common.log(string.format("Returning home across %s Y levels.", y_change))
-  if y_change > 0 then
+function common.return_home(final_y_change)
+  common.log(string.format("Returning home across %s Y levels.", final_y_change))
+  if final_y_change > 0 then
     -- We went up, go back down.
-    for i = 0, y_change - 1 do
+    for i = 0, final_y_change - 1 do
       turtle.down()
     end
     common.log("Returned to start! Stopping.")
     return common.stop()
-  elseif y_change < 0 then
+  elseif final_y_change < 0 then
     -- We went down, go back up.
-    for i = 0, y_change + 1, -1 do
+    for i = 0, final_y_change + 1, -1 do
       turtle.up()
     end
   else
@@ -81,7 +81,7 @@ function common.return_home(y_change)
     return common.stop()
   end
   common.log("Returned home!")
-  return
+  return common.stop()
 end
 
 -- Emergency brake for the turtle.
