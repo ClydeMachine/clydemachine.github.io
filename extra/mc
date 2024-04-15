@@ -194,7 +194,7 @@ function move_strategy_three_up_wide(distance_limit, step_width)
   end
 end
 
-log("Beginning MC - main.")
+common.log("Beginning MC - main.")
 
 -- Main loop goes here
 -- https://claude.ai/chat/5a5ac357-24a1-43a0-9d65-79586b5a58f1
@@ -207,4 +207,4 @@ common.find_and_consume_fuel()
 -- move_strategy_large_steps(1000, global_step_width)
 move_strategy_three_up_wide(global_distance_limit, global_step_width)
 
-log("Exiting MC.")
+common.log("Exiting mc.")
