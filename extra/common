@@ -115,7 +115,7 @@ end
 
 function common.inspect_block_below(block_name)
   local _, data = turtle.inspectDown()
-  if data then:
+  if data then
     log("Comparing block " .. data["name"])  -- This is verbose, un/comment as needed.
     if data["name"] == block_name then
       return true
