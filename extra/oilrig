@@ -96,8 +96,8 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
       common.forward(step) -- Now standing over the next step.
 
       -- Time to turn around and start another layer?
-      if step % step_width == 0 then
-        -- We have gone as many steps over as we go wide.
+      if distance_limit - step == 1 then
+        -- We are on the last zag of this zigzag. :D
         local could_move = common.down(step)
         if could_move then
           y_change = y_change - 1
