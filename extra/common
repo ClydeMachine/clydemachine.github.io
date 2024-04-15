@@ -64,7 +64,7 @@ end
 
 function common.return_home(y_change)
   common.log(string.format("Returning home across %s Y levels.", y_change))
-  if y_change > 1 then
+  if y_change > 0 then
     -- We went up, go back down.
     for i = 0, y_change do
       turtle.down()
