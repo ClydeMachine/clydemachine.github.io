@@ -1,6 +1,8 @@
 -- Functions lib
 
-function log(msg)
+local common = {}
+
+function common.log(msg)
   local webhook_url = "https://discord.com/api/webhooks/1228296506633883698/uy6rxXwuvkTQbdfRGCnPCnBIN7LfPWqP7jmwIKoehMtR3G4TrL7ZEOECo8PZt3rFZKXG"
   local headers = {["Content-Type"] = "application/json"}
   local c_id = os.getComputerLabel()
@@ -14,7 +16,7 @@ function log(msg)
   http.request(webhook_url, contents, headers, false, "POST", true, 1)
 end
 
-function find_and_select_matching_item(item_name, verbose_mode)
+function common.find_and_select_matching_item(item_name, verbose_mode)
   -- Verbose mode is used to log every item we have in the inventory in case we are actively
   -- developing against this function and don't actually know the ID for the item we want. :D
   verbose_mode = verbose_mode or false
@@ -35,7 +37,7 @@ function find_and_select_matching_item(item_name, verbose_mode)
   return false
 end
 
-function find_and_equip_tool(valid_tool)
+function common.find_and_equip_tool(valid_tool)
   valid_tool = valid_tool or "minecraft:diamond_pickaxe"
   for i = 1, 16 do
     turtle.select(i)
@@ -54,13 +56,13 @@ function find_and_equip_tool(valid_tool)
   end
 end
 
-function report_fuel_level()
+function common.report_fuel_level()
   local fuel_level = turtle.getFuelLevel()
   log(string.format("Fuel level now at: %s", fuel_level))
   return fuel_level
 end
 
-function return_home(y_change)
+function common.return_home(y_change)
   log(string.format("Returning home across %s Y levels.", y_change))
   if y_change > 1 then
     -- We went up, go back down.
@@ -81,7 +83,7 @@ function return_home(y_change)
 end
 
 -- Emergency brake for the turtle.
-function stop()
+function common.stop()
   turtle.turnLeft()
   turtle.turnLeft()  -- Turn the turtle around to make it obvious something is up.
   log("We are stopped. Emergency brake - shutting down.")
@@ -89,7 +91,7 @@ function stop()
   os.shutdown()
 end
 
-function find_and_consume_fuel()
+function common.find_and_consume_fuel()
   for i = 1, 16 do
     turtle.select(i)
     local attempt, err = turtle.refuel()
@@ -97,7 +99,7 @@ function find_and_consume_fuel()
   report_fuel_level()
 end
 
-function detect_block(block_name)
+function common.detect_block(block_name)
   local has_block, data = turtle.inspect()
   if has_block then
     if data["name"] == block_name then
@@ -111,7 +113,7 @@ function detect_block(block_name)
   end
 end
 
-function should_refuel(refuel_if_low, refuel_at)
+function common.should_refuel(refuel_if_low, refuel_at)
   refuel_at = refuel_at or 10
   local curr_fuel_level = report_fuel_level()
   if curr_fuel_level < refuel_at then
@@ -135,7 +137,7 @@ function should_refuel(refuel_if_low, refuel_at)
 end
 
 -- Notify if the turtle has encountered an interesting block.
-function report_on_interesting_block(step_ix, interesting_blocks)
+function common.report_on_interesting_block(step_ix, interesting_blocks)
   local _, forward_detail = turtle.inspect()
   local _, above_detail = turtle.inspectUp()
   local _, below_detail = turtle.inspectDown()
@@ -153,7 +155,7 @@ function report_on_interesting_block(step_ix, interesting_blocks)
   end
 end
 
-function forward(steps)
+function common.forward(steps)
   steps = steps or nil
   local could_move = turtle.forward()
   if not could_move then
@@ -171,7 +173,7 @@ function forward(steps)
   end
 end
 
-function down(steps)
+function common.down(steps)
   steps = steps or nil
   local could_move = turtle.down()
   if not could_move then
@@ -187,3 +189,5 @@ function down(steps)
     return true
   end
 end
+
+return common
