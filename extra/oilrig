@@ -4,8 +4,9 @@
 
 -- Example oil location: x=45, z=708, y=62
 
-local global_step_width = 2
-local global_distance_limit = 2
+local global_step_width = 2 -- How far left and right it will search on each layer.
+local global_distance_limit = 2 -- How long that layer is. Doesn't have to be square!
+local global_depth_limit = -20 -- How much y_change should occur at max. Must match the direction. (negative/down)
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local y_change = 0  -- Should be updated at every altitude change.
 
@@ -78,45 +79,47 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
   -- of the oil field, not in it proper.
   common.forward()
 
-  -- On the same y_level, find oil and pick it up.
-  for step = 1, distance_limit do
-    common.should_refuel(global_should_refuel)
-    common.clear_exclusions_from_inventory()
-    turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
-    for leftward = 1, step_width do
-      attempt_oil_gather(debug)
-      common.forward(step)
-    end
-    -- We are now at the end of a step, facing left of where we started.
-    turtle.turnRight() -- Facing forward once again
-    attempt_oil_gather(debug)
-    common.forward(step) -- Now standing over the next step.
-
-    -- Time to turn around and start another layer?
-    if step % step_width == 0 then
-      -- We have gone as many steps over as we go wide.
-      turtle.turnLeft()
-      turtle.turnLeft()
-      local could_move = common.down(step)
-      if could_move then
-        y_change = y_change - 1
-      end
-    else
-      -- We do this in the else block because otherwise we wouldn't
-      -- do a full square, we'd just zigzag and mess it up.
-      turtle.turnRight() -- Face down the rightward step.
-      for rightward = 1, step_width do
+  for y_step = 0, global_depth_limit, -1 do
+    log("y_step now at " .. y_step .. "/" .. global_depth_limit)
+    -- On the same y_level, find oil and pick it up.
+    for step = 1, distance_limit do
+      common.should_refuel(global_should_refuel)
+      common.clear_exclusions_from_inventory()
+      turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
+      for leftward = 1, step_width do
         attempt_oil_gather(debug)
         common.forward(step)
       end
-      -- We are now facing right of where we started.
-      turtle.turnLeft()
+      -- We are now at the end of a step, facing left of where we started.
+      turtle.turnRight() -- Facing forward once again
       attempt_oil_gather(debug)
-      common.forward(step) -- Now over the next leftward step.
-      -- And we're ready to start the next.
-    end
+      common.forward(step) -- Now standing over the next step.
 
-  end
+      -- Time to turn around and start another layer?
+      if step % step_width == 0 then
+        -- We have gone as many steps over as we go wide.
+        local could_move = common.down(step)
+        if could_move then
+          y_change = y_change - 1
+        end
+        turtle.turnLeft()
+        turtle.turnLeft()
+      else
+        -- We do this in the else block because otherwise we wouldn't
+        -- do a full square, we'd just zigzag and mess it up.
+        turtle.turnRight() -- Face down the rightward step.
+        for rightward = 1, step_width do
+          attempt_oil_gather(debug)
+          common.forward(step)
+        end
+        -- We are now facing right of where we started.
+        turtle.turnLeft()
+        attempt_oil_gather(debug)
+        common.forward(step) -- Now over the next leftward step.
+        -- And we're ready to start the next.
+      end
+    end -- Layer loop.
+  end -- y_change loop.
 end
 
 common.log("Beginning oilrig - main.")
