@@ -35,7 +35,6 @@ end
 
 function detect_any_oil_blocks(oil_block_names)
   for _, oil_block_name in ipairs(oil_block_names) do
-    common.log("Checking oil_block_name " .. oil_block_name)
     if common.inspect_block_below(oil_block_name) then
       -- Return on first success.
       common.log("Detected a match for " .. oil_block_name .. "!")
