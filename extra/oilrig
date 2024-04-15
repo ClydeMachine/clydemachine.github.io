@@ -28,9 +28,12 @@ function collect_oil()
   local could_pick_up, err = turtle.placeDown()
   if could_pick_up then
     common.log("Picked up oil!")
+    return true
   else
     common.log("Tried but failed to pick up oil! Reason: " .. err)
+    return false
   end
+  return false
 end
 
 function detect_any_oil_blocks(oil_block_names)
@@ -48,17 +51,25 @@ end
 
 -- Check directly ahead of us for oil to pick up.
 function attempt_oil_gather()
-  local is_oil = detect_any_oil_blocks(interesting_blocks)
+  local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
+  if not did_find_bucket then
+    common.log("We have no bucket to use! Returning home.")
+    return common.return_home(y_change)
+  end
 
+  local is_oil = detect_any_oil_blocks(interesting_blocks)
   if is_oil then
-    -- We have oil. Do we have a bucket for it?
-    local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
-    if not did_find_bucket then
-      common.log("We have no bucket to use! Returning home.")
-      common.return_home(y_change)
-    end
+    -- We have oil. We have a bucket for it.
     common.log("Found oil! Collecting...")
-    collect_oil()
+    if collect_oil() then
+      -- Successful collection means we have fewer buckets. Could exit fast here.
+      -- TODO Consider making this a function.
+      local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
+      if not did_find_bucket then
+        common.log("We have no bucket to use! Returning home.")
+        return common.return_home(y_change)
+      end
+    end
   end
 
   if full_tank then
@@ -126,7 +137,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, dep
   end -- y_change loop.
 
   -- If we've gotten this far we have administratively exited (limits breached). Return home.
-  common.return_home(y_change)
+  return common.return_home(y_change)
 end
 
 common.log("Beginning oilrig - main.")
