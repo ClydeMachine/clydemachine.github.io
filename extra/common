@@ -26,7 +26,7 @@ function common.find_and_select_matching_item(item_name, verbose_mode)
     local found_item = turtle.getItemDetail(i)
     -- Check if we have a diamond pickaxe or other compatible tool, and if so, equip it.
     if found_item and found_item["name"] == item_name then
-      common.log("Found a valid " .. found_item .. " to use in slot " .. i .. ".")
+      common.log("Found a valid " .. found_item["name"] .. " to use in slot " .. i .. ".")
       -- Just an item select so nothing else to do.
       return true
     elseif found_item and verbose_mode then
