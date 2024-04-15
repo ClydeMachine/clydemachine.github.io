@@ -84,11 +84,11 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
   for y_step = 0, global_depth_limit, -1 do
     common.log("y_step now at " .. y_step .. "/" .. global_depth_limit)
     -- On the same y_level, find oil and pick it up.
-    for step = 1, distance_limit do
+    for step = 0, distance_limit do
       common.should_refuel(global_should_refuel)
       common.clear_exclusions_from_inventory()
       turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
-      for leftward = 1, step_width do
+      for leftward = 0, step_width do
         attempt_oil_gather(debug)
         common.forward(step)
       end
@@ -110,7 +110,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
         -- We do this in the else block because otherwise we wouldn't
         -- do a full square, we'd just zigzag and mess it up.
         turtle.turnRight() -- Face down the rightward step.
-        for rightward = 1, step_width do
+        for rightward = 0, step_width do
           attempt_oil_gather(debug)
           common.forward(step)
         end
