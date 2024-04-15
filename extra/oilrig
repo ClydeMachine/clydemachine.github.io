@@ -19,8 +19,9 @@ local common = require("common")
 
 -- World interaction functions
 
+-- You have to select a bucket in separate function before this will work.
+-- See `find_and_select_matching_item`
 function collect_oil()
-  -- TODO Select a bucket.
   local could_pick_up, err = turtle.place()
   if could_pick_up then
     common.log("Picked up oil!")
