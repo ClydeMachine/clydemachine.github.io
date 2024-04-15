@@ -100,6 +100,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, dep
       if distance_limit - step == 1 then
         common.log("Time to turn around!")
         -- We are on the last zag of this zigzag. :D
+        attempt_oil_gather(debug)
         local could_move = common.down(step)
         if could_move then
           y_change = y_change - 1
