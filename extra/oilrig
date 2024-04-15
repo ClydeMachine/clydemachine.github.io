@@ -44,10 +44,10 @@ function attempt_oil_gather(debug)
     -- We have oil. Do we have a bucket for it?
     local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
     if not did_find_bucket then
-      log("We have no bucket to use! Returning home.")
+      common.log("We have no bucket to use! Returning home.")
       common.return_home()
     end
-    log("Found oil! Collecting...")
+    common.log("Found oil! Collecting...")
     collect_oil()
   end
 
@@ -62,8 +62,8 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
   debug = debug or false
   local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
   if not did_find_bucket then
-    log("We have no bucket to use! Stopping.")
-    stop()
+    common.log("We have no bucket to use! Stopping.")
+    common.stop()
   end
 
   -- On the same y_level, find oil and pick it up.
