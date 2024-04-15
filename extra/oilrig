@@ -23,7 +23,7 @@ local common = require("common")
 -- You have to select a bucket in separate function before this will work.
 -- See `find_and_select_matching_item`
 function collect_oil()
-  local could_pick_up, err = turtle.place()
+  local could_pick_up, err = turtle.placeDown()
   if could_pick_up then
     common.log("Picked up oil!")
   else
@@ -33,7 +33,7 @@ end
 
 function detect_any_oil_blocks(oil_block_names)
   for _, oil_block_name in ipairs(oil_block_names) do
-    if is_oil == common.detect_block(oil_block_name) then
+    if is_oil == common.inspect_block_below(oil_block_name) then
       -- Return on first success.
       return is_oil
     end
@@ -57,6 +57,8 @@ function attempt_oil_gather(debug)
     end
     common.log("Found oil! Collecting...")
     collect_oil()
+  else
+    common.log("Did not detect an oil block.")
   end
 
   if full_tank then
