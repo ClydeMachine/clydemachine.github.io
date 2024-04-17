@@ -142,7 +142,7 @@ function move_strategy_three_up_wide(distance_limit, step_width)
   -- On the same y_level, strip mine wide and deep.
   for step = 1, distance_limit do
     common.should_refuel(global_should_refuel)
-    common.clear_exclusions_from_inventory()
+    common.clear_exclusions_from_inventory_when_low_space()
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
     for leftward = 1, step_width do
       break_forward_up_and_down(step)

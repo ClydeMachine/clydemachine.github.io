@@ -2,6 +2,17 @@
 
 local common = {}
 
+local common_exclusions = {
+  "minecraft:tuff",
+  "minecraft:cobbled_deepslate",
+  "minecraft:cobblestone",
+  "minecraft:redstone",
+  "minecraft:dirt",
+  "minecraft:diorite",
+  "minecraft:granite",
+  "minecraft:andesite",
+}
+
 function common.log(msg)
   local webhook_url = "https://discord.com/api/webhooks/1228296506633883698/uy6rxXwuvkTQbdfRGCnPCnBIN7LfPWqP7jmwIKoehMtR3G4TrL7ZEOECo8PZt3rFZKXG"
   local headers = {["Content-Type"] = "application/json"}
@@ -193,16 +204,6 @@ end
 -- The turtle has a limited inventory that fills up quickly.
 -- We can administratively drop items we don't want to carry.
 function common.clear_exclusions_from_inventory(exclusions)
-  local common_exclusions = {
-    "minecraft:tuff",
-    "minecraft:cobbled_deepslate",
-    "minecraft:cobblestone",
-    "minecraft:redstone",
-    "minecraft:dirt",
-    "minecraft:diorite",
-    "minecraft:granite",
-    "minecraft:andesite",
-  }
   exclusions = exclusions or common_exclusions
 
   for slot_ix = 1, 16 do
@@ -224,7 +225,8 @@ end
 
 -- It can make for cleaner auditing of a robot's mining operations if they only
 -- drop garbage from time to time.
-function common.drop_exclusions_from_inventory_when_low_space(exclusions, threshold)
+function common.clear_exclusions_from_inventory_when_low_space(exclusions, threshold)
+  exclusions = exclusions or common_exclusions
   threshold = threshold or 4
   common.log("Checking if we are low on space and should garbage collect.")
   local low_space = common.get_total_free_slots() <= threshold
