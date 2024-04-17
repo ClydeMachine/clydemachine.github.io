@@ -229,9 +229,10 @@ function common.clear_exclusions_from_inventory_when_low_space(exclusions, thres
   exclusions = exclusions or common_exclusions
   threshold = threshold or 4
   common.log("Checking if we are low on space and should garbage collect.")
+  local remaining_free_slots = common.get_total_free_slots()
   local low_space = common.get_total_free_slots() <= threshold
   if low_space then
-    common.log("Found low_space == " .. low_space .. ", clearing garbage.")
+    common.log(string.format("Found low space (%d remaining slots free), clearing garbage.", remaining_free_slots))
     return common.clear_exclusions_from_inventory(exclusions)
   end
 end
