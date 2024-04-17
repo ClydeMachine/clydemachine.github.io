@@ -210,6 +210,30 @@ function common.clear_exclusions_from_inventory(exclusions)
   end
 end
 
+-- Given an inventory, determine how many unoccupied slots there are.
+function common.get_total_free_slots()
+  local unoccupied_slots = 0
+  for i = 1, 16 do
+    local remaining_slot_space = turtle.getItemSpace(i)
+    if remaining_slot_space > 63 then
+      unoccupied_slots = unoccupied_slots + 1
+    end
+  end
+  return unoccupied_slots
+end
+
+-- It can make for cleaner auditing of a robot's mining operations if they only
+-- drop garbage from time to time.
+function common.drop_exclusions_from_inventory_when_low_space(exclusions, threshold)
+  threshold = threshold or 4
+  common.log("Checking if we are low on space and should garbage collect.")
+  local low_space = common.get_total_free_slots() <= threshold
+  if low_space then
+    common.log("Found low_space == " .. low_space .. ", clearing garbage.")
+    return common.clear_exclusions_from_inventory(exclusions)
+  end
+end
+
 function common.forward(steps)
   steps = steps or nil
   local could_move = turtle.forward()
