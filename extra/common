@@ -69,7 +69,7 @@ end
 
 function common.report_fuel_level()
   local fuel_level = turtle.getFuelLevel()
-  common.log(string.format("Fuel level now at: %s", fuel_level))
+  common.log(string.format("Fuel: %s", fuel_level))
   return fuel_level
 end
 
@@ -228,7 +228,6 @@ end
 function common.clear_exclusions_from_inventory_when_low_space(exclusions, threshold)
   exclusions = exclusions or common_exclusions
   threshold = threshold or 4
-  common.log("Checking if we are low on space and should garbage collect.")
   local remaining_free_slots = common.get_total_free_slots()
   local low_space = common.get_total_free_slots() <= threshold
   if low_space then
