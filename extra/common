@@ -73,6 +73,59 @@ function common.report_fuel_level()
   return fuel_level
 end
 
+function common.return_to_original_facing(facing_original_direction)
+  -- If we have an integer representing the number of turns away from our original facing we are,
+  -- we can undo them.
+  if facing_original_direction == 0 then
+    -- Nothing to do!
+    return
+  end
+  if facing_original_direction < 0 then
+    -- We had turned left. Turn right to correct it.
+    for i = 0, facing_original_direction + 1, -1 do
+      turtle.turnRight()
+    end
+    return
+  end
+  if facing_original_direction > 0 then
+    -- We had turned right. Turn left to correct it.
+    for i = 0, facing_original_direction - 1 do
+      turtle.turnLeft()
+    end
+    return
+  end
+end
+
+function common.come_come(final_forward_change, facing_original_direction)
+  -- Before we can move, we need to know if we are facing the wrong direction.
+  common.return_to_original_facing(facing_original_direction)
+
+  common.log(string.format("Returning home across %s blocks.", final_forward_change))
+  if final_forward_change > 0 then
+    -- We went forward, go back straight.
+    local successful_movements = 0
+    for i = 0, final_forward_change - 1 do
+      local attempt_back, _ = turtle.back()
+      if attempt_back then
+        successful_movements = successful_movements + 1
+      end
+    end
+    if successful_movements < final_forward_change then
+      -- Something went wrong.
+      local probably_location = final_forward_change - successful_movements
+      common.log(string.format("!! We attempted to return home but only made %d successful moves.", successful_movements))
+      common.log(string.format("Look for me %d blocks straight from where I started.", probably_location))
+    end
+    common.log("Returned, requesting stop.")
+    return common.stop()
+  else
+    common.log("Requesting to return home but no forward_change, stopping.")
+    return common.stop()
+  end
+  common.log("Returned home!")
+  return common.stop()
+end
+
 function common.return_home(final_y_change)
   common.log(string.format("Returning home across %s Y levels.", final_y_change))
   if final_y_change > 0 then
