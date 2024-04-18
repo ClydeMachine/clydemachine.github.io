@@ -155,7 +155,7 @@ function move_strategy_three_up_wide(distance_limit, step_width)
     turtle.turnRight() -- Facing forward once again
     facing_original_direction = facing_original_direction + 1
     break_forward_up_and_down(step) -- Now standing over the next step.
-    forward_change = forward_change += 1
+    forward_change = forward_change + 1
     turtle.turnRight() -- Face down the rightward step.
     facing_original_direction = facing_original_direction + 1
     for rightward = 1, step_width do
