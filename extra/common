@@ -10,6 +10,7 @@ local common_exclusions = {
   "minecraft:dirt",
   "minecraft:diorite",
   "minecraft:granite",
+  "minecraft:gravel",
   "minecraft:andesite",
 }
 
