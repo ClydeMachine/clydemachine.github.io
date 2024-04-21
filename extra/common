@@ -267,11 +267,11 @@ function common.drop_if_name_doesnt_match(slot_ix, inclusions)
         -- No need to check the rest of the inclusions for this slot, this item is a keeper.
         return
       end
-      -- If we did not exit by this point that means there were no positive matches - it's a negative.
-      common.log(string.format("Garbage: We found %s and are dropping it.", found_item_name))
-      turtle.drop()
-      return
     end
+    -- If we did not exit by this point that means there were no positive matches - it's a negative.
+    common.log(string.format("Garbage: We found %s and are dropping it.", found_item_name))
+    turtle.drop()
+    return
   else
     return -- No item in this slot to check!
   end
