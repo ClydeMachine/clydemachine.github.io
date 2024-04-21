@@ -1,3 +1,4 @@
+-- Version 20240420_a
 -- Purpose of this script is for a CC Tweaked Minecraft Turtle to collect
 -- oil blocks out on the ocean. While it should not need to clear any blocks to do this,
 -- the turtle will equip a tool anyway.
