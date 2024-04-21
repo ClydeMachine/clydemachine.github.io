@@ -177,7 +177,7 @@ function move_strategy_three_up_wide(distance_limit, step_width)
     -- And we're ready to start the next.
   end
   -- Loop completed, drop garbage then return home.
-  if KEEP_ONLY_INTERESTING_BLOCKS then
+  if KEEP_ONLY_CERTAIN_BLOCKS then
     common.clear_all_except_inclusions_from_inventory(keep_only_certain_blocks_names)
   end
   common.clear_exclusions_from_inventory()
