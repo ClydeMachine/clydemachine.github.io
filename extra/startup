@@ -1,3 +1,4 @@
+-- Version 20240420_a
 -- To run this on a turtle delete startup then run
 -- wget https://www.clydemachine.com/extra/startup
 shell.run("delete common")
@@ -6,4 +7,5 @@ shell.run("delete oilrig")
 shell.run("wget https://www.clydemachine.com/extra/common")
 shell.run("wget https://www.clydemachine.com/extra/mc")
 shell.run("wget https://www.clydemachine.com/extra/oilrig")
-print("Ready to go!")
+local fuel_level = turtle.getFuelLevel()
+print(string.format("Ready to go! Fuel at: %s", fuel_level))
