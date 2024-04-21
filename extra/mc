@@ -12,10 +12,16 @@ local KEEP_ONLY_CERTAIN_BLOCKS = true  -- Set to false if you want to get everyt
 
 local keep_only_certain_blocks_names = {
   "minecraft:diamond",
-  "minecraft:iron_ore",
+  "minecraft:diamond_ore",
+  -- "minecraft:raw_copper",
+  "minecraft:raw_gold",
+  "minecraft:raw_iron",
+  -- "minecraft:raw_silver",
   "minecraft:gold_ore",
+  "minecraft:iron_ore",
   "minecraft:bucket",
   "minecraft:coal",
+  "minecraft:coal_ore",
 }
 local interesting_blocks = {
   "minecraft:diamond_ore",

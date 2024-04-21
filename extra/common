@@ -261,11 +261,6 @@ function common.drop_if_name_doesnt_match(slot_ix, inclusions)
   if curr_item_data then
     for _, inclusion_name in ipairs(inclusions) do
       local found_item_name = curr_item_data["name"]
-      if not found_item_name == exclusion_name then
-        common.log("Expression not found_item_name == exclusion_name evaluated to true.")
-      else
-        common.log("Expression not found_item_name == exclusion_name evaluated to false.")
-      end
       if found_item_name ~= exclusion_name then
         common.log(string.format("Garbage: We found %s and are dropping it.", found_item_name))
         turtle.drop()
