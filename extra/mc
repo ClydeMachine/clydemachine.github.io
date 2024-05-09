@@ -9,7 +9,7 @@ local global_step_width = 3
 local global_distance_limit = 40
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local refuelAt = 10
-local KEEP_ONLY_CERTAIN_BLOCKS = true  -- Set to false if you want to get everything but explicit exclusions!
+local KEEP_ONLY_CERTAIN_BLOCKS = false  -- Set to false if you want to get everything but explicit exclusions!
 
 local keep_only_certain_blocks_names = {
   "minecraft:coal",
