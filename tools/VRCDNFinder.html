@@ -17,7 +17,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('https://clydemachine.com/images/CMxEiji.png');
+      background-image: var(--background-image);
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -127,6 +127,29 @@
   </div>
 
   <script>
+    /**
+    * Styling
+    */
+    const backgroundImageCarousel = [
+      '/images/VRCPhoto00.jpg',
+      '/images/VRCPhoto01.jpg',
+      '/images/VRCPhoto02.jpg',
+    ];
+
+    function getRandomBackgroundImage() {
+      const randomIndex = Math.floor(Math.random() * backgroundImageCarousel.length);
+      return backgroundImageCarousel[randomIndex];
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const randomBackgroundImage = getRandomBackgroundImage();
+      document.body.style.setProperty('--background-image', `url('${randomBackgroundImage}')`);
+      console.log(randomBackgroundImage);
+    });
+
+    /**
+    * VRCDN Links, table generation, sorting.
+    */
     const urlMap = {
       'Clyde Machine': 'rtspt://stream.vrcdn.live/live/clydemachine',
 
