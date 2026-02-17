@@ -1,1 +1,53 @@
-print("loaded from external")
+-- Purpose of this script is for a CC Tweaked Minecraft Turtle to run through
+-- a quarry and bring back all the interesting blocks. Whether they are interesting
+-- is user-defined but essentially is aimed at the user defining the blocks
+-- to ignore (leave as entities) and bring back everything else.
+
+print("Beginning MC.")
+
+-- Functions lib
+
+local refuelAt = 10
+
+function should_refuel(should_refuel)
+  local curr_fuel_level = turtle.getFuelLevel()
+  if curr_fuel_level < refuelAt then
+    print("Need to refuel, level is at " .. curr_fuel_level)
+
+    -- Need to refuel - should it happen now or later?
+    if should_refuel then
+      print("Refueling!")
+      local refuel_result, err = turtle.refuel()
+      if refuel_result then
+        print("Refueled to " .. turtle.getFuelLevel())
+      else
+        printError(err)
+      end
+    end
+
+  end
+end
+
+-- Classes
+
+-- Class to keep track of where we are.
+local Job = {}
+
+function Job:new(job_definition)
+  local instance = { job_definition = job_definition }
+  setmetatable(instance, self)
+  self.__index = self
+  return instance
+end
+
+function Job:getJobDefinition()
+  return self.job_definition
+end
+
+print("Beginning MC - main.")
+
+-- Main loop goes here
+
+should_refuel(true)
+
+print("Exiting MC.")
