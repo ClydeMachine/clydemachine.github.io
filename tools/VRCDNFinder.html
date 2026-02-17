@@ -148,6 +148,8 @@
       rows.forEach(({ row }) => {
         urlTable.appendChild(row);
       });
+
+      processHighlightRow();
     };
 
     const sortRowsAlphabetically = () => {
@@ -161,12 +163,15 @@
       rows.forEach(({ row }) => {
         urlTable.appendChild(row);
       });
+
+      processHighlightRow();
     };
 
     const ONLINE = '🟢 Online';
     const OFFLINE = '🔴 Offline';
+    const TIMEOUT = '⌚ Timed Out';
 
-    const batchSize = 8;
+    const batchSize = 5;
 
     const updateStatus = async () => {
       checkStatusBtn.disabled = true;
@@ -188,12 +193,16 @@
           // Each request gets a randomly-set delay to distribute them out a little.
           await new Promise(resolve => setTimeout(resolve, Math.random() * 3600 + 1200));
 
-          // Every link has at most TIMEOUT_MS milliseconds to return a response, or is considered offline.
-          const TIMEOUT_MS = 10000;
+          console.time(mp4Link);
+          // Every link has at most TIMEOUT_MS milliseconds to return a response.
+          // This value is set at the p99 for network call response time over 19 VRCDN links.
+          const TIMEOUT_MS = 15738;
           const response = await Promise.race([
             fetch(mp4Link),
             new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), TIMEOUT_MS))
           ]);
+
+          console.timeEnd(mp4Link);
 
           if (response.ok) {
             statusCell.textContent = ONLINE;
@@ -201,16 +210,20 @@
             statusCell.setAttribute('title', 'Online');
             console.log(`${mp4Link} - Online`);
           } else {
-            statusCell.textContent = OFFLINE;
+            console.log(response);
+            statusCell.textContent = `${OFFLINE} ${response.status}`;
             statusCell.classList.add('offline');
             statusCell.setAttribute('title', `HTTP error: status: ${response.status}`);
             console.log(`${mp4Link} - HTTP error: status: ${response.status}`);
           }
         } catch (error) {
-          statusCell.textContent = OFFLINE;
+          console.timeEnd(mp4Link);
+
+          console.log(error);
+          statusCell.textContent = TIMEOUT;
           statusCell.classList.add('offline');
-          statusCell.setAttribute('title', 'Offline');
-          console.log(`${mp4Link} - Offline`);
+          statusCell.setAttribute('title', 'Offline - Timed Out');
+          console.log(`${mp4Link} - Offline - Timed Out`);
         }
 
         checkURL();
@@ -248,6 +261,14 @@
       });
     };
 
+    const processHighlightRow = () => {
+      const highlightUsername = getQueryParam('u');
+      if (highlightUsername) {
+        const decodedUsername = decodeURIComponent(highlightUsername);
+        highlightAndMoveRow(decodedUsername);
+      }
+    };
+
     const getQueryParam = (param) => {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(param);
@@ -260,13 +281,12 @@
     // Table is sorted alphabetically on first load. This will change as statuses are updated.
     sortRowsAlphabetically();
 
-    const highlightUsername = getQueryParam('u');
-    if (highlightUsername) {
-      const decodedUsername = decodeURIComponent(highlightUsername);
-      highlightAndMoveRow(decodedUsername);
-    }
+    processHighlightRow();
 
     checkStatusBtn.addEventListener('click', updateStatus);
+
+    const nLinksTracked = Object.keys(urlMap).length;
+    console.log(`Tracking ${nLinksTracked} VRCDN links!`);
   </script>
 </body>
 </html>
