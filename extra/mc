@@ -23,6 +23,8 @@ function should_refuel(should_refuel)
       else
         printError(err)
       end
+    else
+      print("No need to refuel, already at " .. curr_fuel_level)
     end
 
   end
