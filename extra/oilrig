@@ -95,7 +95,6 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
       -- We are now at the end of a step, facing left of where we started.
       turtle.turnRight() -- Facing forward once again
       attempt_oil_gather(debug)
-      common.forward(step) -- Now standing over the next step.
 
       -- Time to turn around and start another layer?
       if distance_limit - step == 1 then
@@ -107,6 +106,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
         turtle.turnLeft()
         turtle.turnLeft()
       else
+        common.forward(step) -- Now standing over the next step.
         -- We do this in the else block because otherwise we wouldn't
         -- do a full square, we'd just zigzag and mess it up.
         turtle.turnRight() -- Face down the rightward step.
