@@ -5,7 +5,7 @@
 
 -- range(-56, -52) are the y-coords for diamonds apparently.
 local global_step_width = 3
-local global_distance_limit = 40
+local global_distance_limit = 2
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local refuelAt = 10
 local KEEP_ONLY_CERTAIN_BLOCKS = true  -- Set to false if you want to get everything but explicit exclusions!
@@ -178,10 +178,10 @@ function move_strategy_three_up_wide(distance_limit, step_width)
   end
   -- Loop completed, drop garbage then return home.
   if KEEP_ONLY_CERTAIN_BLOCKS then
-    log("KEEP_ONLY_CERTAIN_BLOCKS was evaluated to true.")
+    common.log("KEEP_ONLY_CERTAIN_BLOCKS was evaluated to true.")
     common.clear_all_except_inclusions_from_inventory(keep_only_certain_blocks_names)
   else
-    log("KEEP_ONLY_CERTAIN_BLOCKS was not evaluated to true...?")
+    common.log("KEEP_ONLY_CERTAIN_BLOCKS was not evaluated to true...?")
   end
   common.clear_exclusions_from_inventory()
   common.come_come(forward_change, facing_original_direction)
