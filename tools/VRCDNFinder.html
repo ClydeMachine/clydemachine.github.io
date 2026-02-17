@@ -269,7 +269,7 @@
           console.time(mp4Link);
           // Every link has at most TIMEOUT_MS milliseconds to return a response.
           // This value is set at the p99 for network call response time over 19 VRCDN links.
-          const TIMEOUT_MS = 15738;
+          const TIMEOUT_MS = 16200; // Previously 15738ms
           const response = await Promise.race([
             fetch(mp4Link),
             new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), TIMEOUT_MS))
