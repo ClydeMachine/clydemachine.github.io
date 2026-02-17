@@ -115,12 +115,17 @@ end
 
 function common.inspect_block_below(block_name)
   local _, data = turtle.inspectDown()
-  if data and data["name"] == block_name then
-    return true
-  else
-    -- Is a block but isn't a match.
-    return false
+  if data:
+    log("Comparing block " .. data["name"])  -- This is verbose, un/comment as needed.
+    if data["name"] == block_name then
+      return true
+    else
+      -- Is a block but isn't a match.
+      return false
+    end
   end
+  log("No block data returned.")
+  return false
 end
 
 function common.should_refuel(refuel_if_low, refuel_at)
