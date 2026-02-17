@@ -1,0 +1,147 @@
+-- Functions lib
+
+function log(msg)
+  local webhook_url = "https://discord.com/api/webhooks/1228296506633883698/uy6rxXwuvkTQbdfRGCnPCnBIN7LfPWqP7jmwIKoehMtR3G4TrL7ZEOECo8PZt3rFZKXG"
+  local headers = {["Content-Type"] = "application/json"}
+  local c_id = os.getComputerLabel()
+
+  local body = c_id .. ": " .. msg
+  print(body)  -- Always print anything we'll be sending out.
+  contents = string.format('{"content": "%s"}', body)
+
+  -- You have two options here: sync request or async request.
+  -- http.post(webhook_url, contents, headers)
+  http.request(webhook_url, contents, headers, false, "POST", true, 1)
+end
+
+function find_and_equip_tool()
+  local valid_tool = "minecraft:diamond_pickaxe"
+  for i = 1, 16 do
+    turtle.select(i)
+    local found_tool = turtle.getItemDetail(i)
+    -- Check if we have a diamond pickaxe or other compatible tool, and if so, equip it.
+    if found_tool and found_tool["name"] == valid_tool then
+      log("Found a valid tool to use in slot " .. i .. ": "  .. found_tool["name"])
+      local attempt, err = turtle.equipLeft()
+      if attempt then
+        log("Equipped item at " .. i)
+        break
+      else
+        log("Could not equip at " .. i .. " because error " .. err)
+      end
+    end
+  end
+end
+
+function report_fuel_level()
+  local fuel_level = turtle.getFuelLevel()
+  log(string.format("Fuel level now at: %s", fuel_level))
+  return fuel_level
+end
+
+-- Emergency brake for the turtle.
+function stop()
+  turtle.turnLeft()
+  turtle.turnLeft()  -- Turn the turtle around to make it obvious something is up.
+  log("We are stopped. Emergency brake - shutting down.")
+  os.sleep(4)
+  os.shutdown()
+end
+
+function find_and_consume_fuel()
+  for i = 1, 16 do
+    turtle.select(i)
+    local attempt, err = turtle.refuel()
+  end
+  report_fuel_level()
+end
+
+function detect_block(block_name)
+  local has_block, data = turtle.inspect()
+  if has_block then
+    if data["name"] == block_name then
+      return true
+    else
+      -- Is a block but isn't a match.
+      return false
+    end
+  else
+    return false
+  end
+end
+
+function should_refuel(refuel_if_low, refuel_at)
+  refuel_at = refuel_at or 10
+  local curr_fuel_level = report_fuel_level()
+  if curr_fuel_level < refuel_at then
+    log("Needing a refuel, level is at " .. curr_fuel_level)
+
+    -- Need to refuel - should it happen now or later?
+    if refuel_if_low then
+      log("Refueling!")
+      find_and_consume_fuel()
+      log("Refueled to " .. turtle.getFuelLevel())
+      -- Could be out of fuel.
+      if turtle.getFuelLevel() < refuel_at then
+        log("Refueling failed! Stopping.")
+        stop()
+      end
+    else
+      log("Fuel level too low and not allowed to refuel, stopping.")
+      stop()
+    end
+  end
+end
+
+-- Notify if the turtle has encountered an interesting block.
+function report_on_interesting_block(step_ix, interesting_blocks)
+  local _, forward_detail = turtle.inspect()
+  local _, above_detail = turtle.inspectUp()
+  local _, below_detail = turtle.inspectDown()
+  local blocks_surrounding = {
+    ["ahead"] = forward_detail["name"],
+    ["above"] = above_detail["name"],
+    ["below"] = below_detail["name"],
+  }
+  for k, v in pairs(blocks_surrounding) do
+    for _, interesting_block in ipairs(interesting_blocks) do
+      if v == interesting_block then
+        log(string.format("Block %s discovered %s after %s steps!", v, k, step_ix))
+      end
+    end
+  end
+end
+
+function forward(steps)
+  steps = steps or nil
+  local could_move = turtle.forward()
+  if not could_move then
+    if not steps then
+      log("Could not move.")
+    else
+      log("Could not move after " .. steps .. " steps.")
+    end
+
+    -- TODO Actually handle the collision.
+    stop()
+    return false  -- Won't actually return if we stop()
+  else
+    return true
+  end
+end
+function down(steps)
+  steps = steps or nil
+  local could_move = turtle.down()
+  if not could_move then
+    if not steps then
+      log("Could not move down.")
+    else
+      log("Could not move down after " .. steps .. " steps.")
+    end
+    -- TODO Actually handle the collision.
+    stop()
+    return false  -- Won't actually return if we stop()
+  else
+    return true
+  end
+end

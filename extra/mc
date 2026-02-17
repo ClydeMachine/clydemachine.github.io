@@ -9,135 +9,19 @@ local global_distance_limit = 100
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local refuelAt = 10
 
--- Functions lib
+local interesting_blocks = {
+  "minecraft:diamond_ore",
+  "minecraft:deepslate_diamond_ore",
+  "minecraft:iron_ore",
+  "minecraft:deepslate_iron_ore",
+  "minecraft:gold_ore",
+  "minecraft:deepslate_gold_ore",
+  "minecraft:coal_ore",
+}
 
-function log(msg)
-  local webhook_url = "https://discord.com/api/webhooks/1228296506633883698/uy6rxXwuvkTQbdfRGCnPCnBIN7LfPWqP7jmwIKoehMtR3G4TrL7ZEOECo8PZt3rFZKXG"
-  local headers = {["Content-Type"] = "application/json"}
-  local c_id = os.getComputerLabel()
+local common = require("common")
 
-  local body = c_id .. ": " .. msg
-  print(body)  -- Always print anything we'll be sending out.
-  contents = string.format('{"content": "%s"}', body)
-
-  -- You have two options here: sync request or async request.
-  -- http.post(webhook_url, contents, headers)
-  http.request(webhook_url, contents, headers, false, "POST", true, 1)
-end
-
-log("Beginning MC.")  -- Immediate test.
-
-function find_and_equip_tool()
-  local valid_tool = "minecraft:diamond_pickaxe"
-  for i = 1, 16 do
-    turtle.select(i)
-    local found_tool = turtle.getItemDetail(i)
-    -- Check if we have a diamond pickaxe or other compatible tool, and if so, equip it.
-    if found_tool and found_tool["name"] == valid_tool then
-      log("Found a valid tool to use in slot " .. i .. ": "  .. found_tool["name"])
-      local attempt, err = turtle.equipLeft()
-      if attempt then
-        log("Equipped item at " .. i)
-        break
-      else
-        log("Could not equip at " .. i .. " because error " .. err)
-      end
-    end
-
-  end
-end
-
-function report_fuel_level()
-  local fuel_level = turtle.getFuelLevel()
-  log(string.format("Fuel level now at: %s", fuel_level))
-  return fuel_level
-end
-
-function find_and_consume_fuel()
-  for i = 1, 16 do
-    turtle.select(i)
-    local attempt, err = turtle.refuel()
-  end
-  report_fuel_level()
-end
-
-function should_refuel(refuel_if_low)
-  local curr_fuel_level = report_fuel_level()
-  if curr_fuel_level < refuelAt then
-    log("Needing a refuel, level is at " .. curr_fuel_level)
-
-    -- Need to refuel - should it happen now or later?
-    if refuel_if_low then
-      log("Refueling!")
-      find_and_consume_fuel()
-      log("Refueled to " .. turtle.getFuelLevel())
-      -- Could be out of fuel.
-      if turtle.getFuelLevel() < refuelAt then
-        log("Refueling failed! Stopping.")
-        stop()
-      end
-    else
-      log("Fuel level too low and not allowed to refuel, stopping.")
-      stop()
-    end
-
-  end
-end
-
--- Classes
-
--- Class to keep track of where we are.
-local Job = {}
-
-function Job:new(job_definition)
-  local instance = { job_definition = job_definition }
-  setmetatable(instance, self)
-  self.__index = self
-  return instance
-end
-
-function Job:getJobDefinition()
-  return self.job_definition
-end
-
--- Just a fun one, notify if the turtle has encountered an interesting block.
-function report_on_interesting_block(step_ix)
-  local interesting_blocks = {
-    "minecraft:diamond_ore",
-    "minecraft:deepslate_diamond_ore",
-    "minecraft:iron_ore",
-    "minecraft:deepslate_iron_ore",
-    "minecraft:gold_ore",
-    "minecraft:deepslate_gold_ore",
-    "minecraft:coal_ore",
-  }
-
-  local _, forward_detail = turtle.inspect()
-  local _, above_detail = turtle.inspectUp()
-  local _, below_detail = turtle.inspectDown()
-  local blocks_surrounding = {
-    ["ahead"] = forward_detail["name"],
-    ["above"] = above_detail["name"],
-    ["below"] = below_detail["name"],
-  }
-  for k, v in pairs(blocks_surrounding) do
-    for _, interesting_block in ipairs(interesting_blocks) do
-      if v == interesting_block then
-        log(string.format("Block %s discovered %s after %s steps!", v, k, step_ix))
-      end
-    end
-  end
-
-end
-
--- Emergency brake for the turtle.
-function stop()
-  turtle.turnLeft()
-  turtle.turnLeft()  -- Turn the turtle around to make it obvious something is up.
-  log("We are stopped. Emergency brake - shutting down.")
-  os.sleep(4)
-  os.shutdown()
-end
+log("Beginning mc.")
 
 function detect_gravel()
   local gravel_block_name = "minecraft:gravel"
@@ -220,7 +104,7 @@ function break_forward()
 end
 
 function break_forward_up_and_down(step_ix)
-  report_on_interesting_block(step_ix)
+  common.report_on_interesting_block(step_ix, interesting_blocks)
   turtle.dig("left") -- Always use left tool.
   turtle.digUp("left") -- Dig up so a human can follow along.
   turtle.digDown("left") -- Dig up so a human can follow along.
@@ -255,7 +139,7 @@ end
 function move_strategy_nascar(limit)
   -- step can be analogous to one Y level if you only go down once.
   for step = 1, limit do
-    should_refuel(global_should_refuel)
+    common.should_refuel(global_should_refuel)
     turtle.turnLeft()
     break_forward()
     break_forward()
@@ -266,7 +150,7 @@ end
 function move_strategy_large_steps(y_limit, step_width)
   -- step can be analogous to one Y level if you only go down once per step.
   for step = 1, y_limit do
-    should_refuel(global_should_refuel)
+    common.should_refuel(global_should_refuel)
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first step
     for leftward = 1, step_width do
       break_forward()
@@ -290,7 +174,7 @@ end
 function move_strategy_three_up_wide(distance_limit, step_width)
   -- On the same y_level, strip mine wide and deep.
   for step = 1, distance_limit do
-    should_refuel(global_should_refuel)
+    common.should_refuel(global_should_refuel)
     clear_exclusions_from_inventory()
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
     for leftward = 1, step_width do
@@ -316,8 +200,8 @@ log("Beginning MC - main.")
 -- https://claude.ai/chat/5a5ac357-24a1-43a0-9d65-79586b5a58f1
 -- https://tweaked.cc/module/turtle.html#v:inspect
 
-find_and_equip_tool()
-find_and_consume_fuel()
+common.find_and_equip_tool()
+common.find_and_consume_fuel()
 
 -- move_strategy_nascar(32)
 -- move_strategy_large_steps(1000, global_step_width)
