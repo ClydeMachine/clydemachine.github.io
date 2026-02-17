@@ -4,8 +4,8 @@
 
 -- Example oil location: x=45, z=708, y=62
 
-local global_step_width = 3 -- How far left and right it will search on each layer.
-local global_distance_limit = 3 -- How long that layer is. Doesn't have to be square!
+local global_step_width = 4 -- How far left and right it will search on each layer.
+local global_distance_limit = 4 -- How long that layer is. Doesn't have to be square!
 local global_depth_limit = -3 -- How much y_change should occur at max. Must match the direction. (negative/down)
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local y_change = 0  -- Should be updated at every altitude change.
@@ -57,8 +57,6 @@ function attempt_oil_gather(debug)
     end
     common.log("Found oil! Collecting...")
     collect_oil()
-  else
-    common.log("Did not detect an oil block.")
   end
 
   if full_tank then
@@ -131,12 +129,26 @@ common.log("Beginning oilrig - main.")
 -- https://claude.ai/chat/5a5ac357-24a1-43a0-9d65-79586b5a58f1
 -- https://tweaked.cc/module/turtle.html#v:place
 
+-- For indexing reasons these limits are interpretted as one less than the user requested.
+global_distance_limit = global_distance_limit
+global_step_width = global_step_width - 1
+if global_depth_limit < 0 then
+  global_depth_limit = global_depth_limit + 1
+else
+  global_depth_limit = global_depth_limit - 1
+end
+
 common.find_and_equip_tool()
 common.find_and_consume_fuel()
 
 -- Debugging
 common.find_and_select_matching_item(bucket_item_name, true)
 
-move_strategy_by_layer__pick_up_liquids(global_distance_limit, global_step_width, global_depth_limit)
+
+move_strategy_by_layer__pick_up_liquids(
+  global_distance_limit,
+  global_step_width,
+  global_depth_limit,
+)
 
 common.log("Exiting oilrig.")
