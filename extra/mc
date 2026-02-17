@@ -96,6 +96,31 @@ function detect_gravel()
   end
 end
 
+function drop_if_name_matches(slot_ix, exclusions, curr_item_data)
+  turtle.select(slot_ix)
+  local curr_item_data = turtle.getItemDetail()
+  for _, exclusion_name in ipairs(exclusions) do
+    if curr_item_data["name"] == exclusion_name then
+      turtle.drop()
+      return -- No need to check the rest of the exclusions for this slot.
+    end
+  end
+end
+
+-- The turtle has a limited inventory that fills up quickly.
+-- We can administratively drop items we don't want to carry.
+function clear_exclusions_from_inventory()
+  local exclusions = {
+    "minecraft:tuff",
+    "minecraft:cobbled_deepslate",
+    "minecraft:redstone",
+    "minecraft:dirt",
+  }
+  for slot_ix = 1, 16 do
+    local result = drop_if_name_matches(slot_ix, exclusions, curr_item_data)
+  end
+end
+
 function handle_gravel()
   print("Checking if we are blocked by gravel...")
   -- if gravel, we basically just keep mining in place til it's gone.
@@ -195,6 +220,7 @@ function move_strategy_three_up_wide(distance_limit, step_width)
   -- On the same y_level, strip mine wide and deep.
   for step = 1, distance_limit do
     should_refuel(true)
+    clear_exclusions_from_inventory()
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
     for leftward = 1, step_width do
       break_forward_up_and_down()
