@@ -88,7 +88,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, dep
       common.should_refuel(global_should_refuel)
       common.clear_exclusions_from_inventory()
       turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
-      for leftward = 0, step_width do
+      for leftward = 0, step_width - 1 do
         attempt_oil_gather(debug)
         common.forward(step)
       end
@@ -98,7 +98,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, dep
 
       -- Time to turn around and start another layer?
       if distance_limit - step == 1 then
-        log("Time to turn around!")
+        common.log("Time to turn around!")
         -- We are on the last zag of this zigzag. :D
         local could_move = common.down(step)
         if could_move then
