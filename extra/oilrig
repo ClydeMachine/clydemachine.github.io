@@ -145,10 +145,6 @@ common.find_and_consume_fuel()
 common.find_and_select_matching_item(bucket_item_name, true)
 
 
-move_strategy_by_layer__pick_up_liquids(
-  global_distance_limit,
-  global_step_width,
-  global_depth_limit,
-)
+move_strategy_by_layer__pick_up_liquids(global_distance_limit, global_step_width, global_depth_limit)
 
 common.log("Exiting oilrig.")
