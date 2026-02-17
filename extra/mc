@@ -178,7 +178,10 @@ function move_strategy_three_up_wide(distance_limit, step_width)
   end
   -- Loop completed, drop garbage then return home.
   if KEEP_ONLY_CERTAIN_BLOCKS then
+    log("KEEP_ONLY_CERTAIN_BLOCKS was evaluated to true.")
     common.clear_all_except_inclusions_from_inventory(keep_only_certain_blocks_names)
+  else
+    log("KEEP_ONLY_CERTAIN_BLOCKS was not evaluated to true...?")
   end
   common.clear_exclusions_from_inventory()
   common.come_come(forward_change, facing_original_direction)
