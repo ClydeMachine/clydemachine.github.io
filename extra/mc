@@ -99,9 +99,9 @@ function report_on_interesting_block(step_ix)
   local _, above_detail = turtle.inspectUp()
   local _, below_detail = turtle.inspectDown()
   local blocks_surrounding = {
-    "ahead": forward_detail["name"},
-    "above": above_detail["name"},
-    "below": below_detail["name"},
+    ["ahead"] = forward_detail["name"],
+    ["above"] = above_detail["name"],
+    ["below"] = below_detail["name"],
   }
   for k, v in pairs(blocks_surrounding) do
     for _, interesting_block in ipairs(interesting_blocks) do
