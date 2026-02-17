@@ -70,6 +70,7 @@ end
 
 function break_forward()
   turtle.dig("left") -- Always use left tool.
+  turtle.digUp("left") -- Dig up so a human can follow along.
   turtle.suck()
   local is_blocked = turtle.detect()
   if is_blocked then
@@ -82,6 +83,7 @@ end
 
 function break_down()
   turtle.digDown("left") -- Always use left tool.
+  turtle.digUp("left") -- Dig up so a human can follow along.
   turtle.suckDown()
   local is_blocked = turtle.detectDown()
   if is_blocked then
@@ -94,6 +96,7 @@ end
 
 -- Move in a square and clear blocks out.
 function move_strategy_nascar(limit)
+  -- step can be analogous to one Y level if you only go down once.
   for step = 1, limit do
     turtle.turnLeft()
     break_forward()
@@ -112,6 +115,6 @@ find_and_equip_tool()
 
 for iter = 1, 100 do
   should_refuel(true)
-  move_strategy_nascar(16)
+  move_strategy_nascar(32)
 end
 print("Exiting MC.")
