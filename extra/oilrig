@@ -80,7 +80,7 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, deb
   common.forward()
 
   for y_step = 0, global_depth_limit, -1 do
-    log("y_step now at " .. y_step .. "/" .. global_depth_limit)
+    common.log("y_step now at " .. y_step .. "/" .. global_depth_limit)
     -- On the same y_level, find oil and pick it up.
     for step = 1, distance_limit do
       common.should_refuel(global_should_refuel)
