@@ -61,29 +61,44 @@ end
 
 -- Emergency brake for the turtle.
 function stop()
+  turtle.turnLeft()
+  turtle.turnLeft()  -- Turn the turtle around to make it obvious something is up.
   print("Emergency brake - shutting down in a few minutes.")
   os.sleep(120)
   os.shutdown()
+end
+
+function break_forward()
+  turtle.dig("left") -- Always use left tool.
+  turtle.suck()
+  local is_blocked = turtle.detect()
+  if is_blocked then
+    print("We are blocked by something we couldn't break!")
+    stop()
+  end
+  -- Not blocked - move forward.
+  turtle.forward()
+end
+
+function break_down()
+  turtle.digDown("left") -- Always use left tool.
+  turtle.suckDown()
+  local is_blocked = turtle.detectDown()
+  if is_blocked then
+    print("We are blocked by something we couldn't break!")
+    stop()
+  end
+  -- Not blocked - move down.
+  turtle.down()
 end
 
 -- Move in a square and clear blocks out.
 function move_strategy_nascar(limit)
   for step = 1, limit do
     turtle.turnLeft()
-    turtle.dig("left") -- Always use left tool.
-    turtle.suck()
-    local is_blocked = turtle.detect()
-    if is_blocked then
-      print("We are blocked by something we couldn't break!")
-      turtle.up()
-      stop()
-    end
-    -- Not blocked - move forward.
-    turtle.forward()
-    if step % 4 == 0 then
-      turtle.digDown()
-      turtle.down()
-    end
+    break_forward()
+    break_forward()
+    break_down()
   end
 end
 
@@ -92,8 +107,10 @@ print("Beginning MC - main.")
 -- Main loop goes here
 -- https://claude.ai/chat/5a5ac357-24a1-43a0-9d65-79586b5a58f1
 -- https://tweaked.cc/module/turtle.html#v:inspect
+
+find_and_equip_tool()
+
 for iter = 1, 100 do
-  find_and_equip_tool()
   should_refuel(true)
   move_strategy_nascar(16)
 end
