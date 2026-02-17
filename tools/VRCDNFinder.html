@@ -81,10 +81,16 @@
 
   <script>
     const urlMap = {
-      'Ayachii': 'rtspt://stream.vrcdn.live/live/ayachii',
-      'BotBrandon': 'rtspt://stream.vrcdn.live/live/botbrandon',
       'Clyde Machine': 'rtspt://stream.vrcdn.live/live/clydemachine',
+
       'drewroses': 'rtspt://stream.vrcdn.live/live/drewroses',
+      'Narshwhal': 'rtspt://stream.vrcdn.live/live/narshwhal',
+      'Naku': 'rtspt://stream.vrcdn.live/live/naku',
+      'sayuri pastel': 'rtspt://stream.vrcdn.live/live/sayuripastel',
+      'subdefense': 'rtspt://stream.vrcdn.live/live/subdefense',
+      'Ayachii': 'rtspt://stream.vrcdn.live/live/ayachii',
+
+      'BotBrandon': 'rtspt://stream.vrcdn.live/live/botbrandon',
       'Eiji': 'rtspt://stream.vrcdn.live/live/eiji',
       'Fyzika': 'rtspt://stream.vrcdn.live/live/fyzika',
       'Giga Strawby': 'rtspt://stream.vrcdn.live/live/musicenjoyer',
@@ -92,10 +98,6 @@
       'Haaylo': 'rtspt://stream.vrcdn.live/live/halo',
       'infinitysquared': 'rtspt://stream.vrcdn.live/live/infsq',
       'Jivy': 'rtspt://stream.vrcdn.live/live/jivy',
-      'Naku': 'rtspt://stream.vrcdn.live/live/naku',
-      'Narshwhal': 'rtspt://stream.vrcdn.live/live/narshwhal',
-      'sayuri pastel': 'rtspt://stream.vrcdn.live/live/sayuripastel',
-      'subdefense': 'rtspt://stream.vrcdn.live/live/subdefense',
       'Turels': 'rtspt://stream.vrcdn.live/live/turels',
       'Woodgraves': 'rtspt://stream.vrcdn.live/live/woodgraves',
     };
@@ -125,59 +127,7 @@
       return { row, mp4Link, statusCell };
     });
 
-    const batchSize = 4;
-
-    const updateStatus = async () => {
-      checkStatusBtn.disabled = true;
-
-      const queue = [...rows];
-
-      const checkURL = async () => {
-        if (queue.length === 0) {
-          sortRows();
-          checkStatusBtn.disabled = false;
-          return;
-        }
-
-        const { mp4Link, statusCell } = queue.shift();
-
-        statusCell.textContent = '⏳ Checking...';
-
-        try {
-          await new Promise(resolve => setTimeout(resolve, Math.random() * 90 + 10));
-
-          const response = await Promise.race([
-            fetch(mp4Link),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
-          ]);
-
-          if (response.ok) {
-            statusCell.textContent = '🟢 Online';
-            statusCell.classList.add('online');
-            statusCell.setAttribute('title', 'Online');
-            console.log(`${mp4Link} - Online`);
-          } else {
-            statusCell.textContent = '🔴 Offline';
-            statusCell.classList.add('offline');
-            statusCell.setAttribute('title', `HTTP error! status: ${response.status}`);
-            console.log(`${mp4Link} - HTTP error! status: ${response.status}`);
-          }
-        } catch (error) {
-          statusCell.textContent = '🔴 Offline';
-          statusCell.classList.add('offline');
-          statusCell.setAttribute('title', 'Offline');
-          console.log(`${mp4Link} - Offline`);
-        }
-
-        checkURL();
-      };
-
-      for (let i = 0; i < batchSize; i++) {
-        checkURL();
-      }
-    };
-
-    const sortRows = () => {
+    const sortRowsByStatus = () => {
       rows.sort((a, b) => {
         const statusA = a.statusCell.textContent.includes('Online') ? 0 : 1;
         const statusB = b.statusCell.textContent.includes('Online') ? 0 : 1;
@@ -195,9 +145,82 @@
       });
     };
 
+    const sortRowsAlphabetically = () => {
+      rows.sort((a, b) => {
+        const usernameA = a.row.children[0].textContent.toLowerCase();
+        const usernameB = b.row.children[0].textContent.toLowerCase();
+        return usernameA.localeCompare(usernameB);
+      });
+
+      urlTable.innerHTML = '';
+      rows.forEach(({ row }) => {
+        urlTable.appendChild(row);
+      });
+    };
+
+    const batchSize = 4;
+
+    const updateStatus = async () => {
+      checkStatusBtn.disabled = true;
+
+      const queue = [...rows];
+
+      const checkURL = async () => {
+        if (queue.length === 0) {
+          sortRowsByStatus();
+          checkStatusBtn.disabled = false;
+          return;
+        }
+
+        const { mp4Link, statusCell } = queue.shift();
+
+        statusCell.textContent = '⏳ Checking...';
+
+        try {
+          // Each request gets a randomly-set delay to distribute them out a little.
+          await new Promise(resolve => setTimeout(resolve, Math.random() * 900 + 100));
+
+          // Every link has at most TIMEOUT_MS milliseconds to return a response, or is considered offline.
+          const TIMEOUT_MS = 10000;
+          const response = await Promise.race([
+            fetch(mp4Link),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), TIMEOUT_MS))
+          ]);
+
+          const ONLINE = '🟢 Online';
+          const OFFLINE = '🔴 Offline';
+          if (response.ok) {
+            statusCell.textContent = ONLINE;
+            statusCell.classList.add('online');
+            statusCell.setAttribute('title', 'Online');
+            console.log(`${mp4Link} - Online`);
+          } else {
+            statusCell.textContent = OFFLINE;
+            statusCell.classList.add('offline');
+            statusCell.setAttribute('title', `HTTP error: status: ${response.status}`);
+            console.log(`${mp4Link} - HTTP error: status: ${response.status}`);
+          }
+        } catch (error) {
+          statusCell.textContent = OFFLINE;
+          statusCell.classList.add('offline');
+          statusCell.setAttribute('title', 'Offline');
+          console.log(`${mp4Link} - Offline`);
+        }
+
+        checkURL();
+      };
+
+      for (let i = 0; i < batchSize; i++) {
+        checkURL();
+      }
+    };
+
     rows.forEach(({ row }) => {
       urlTable.appendChild(row);
     });
+
+    // Table is sorted alphabetically on first load. This will change as statuses are updated.
+    sortRowsAlphabetically();
 
     checkStatusBtn.addEventListener('click', updateStatus);
   </script>
