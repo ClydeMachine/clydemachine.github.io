@@ -76,6 +76,7 @@ function common.return_home(final_y_change)
     for i = 0, final_y_change + 1, -1 do
       turtle.up()
     end
+    return common.stop()
   else
     common.log("Requesting to return home but no y_change, stopping.")
     return common.stop()
