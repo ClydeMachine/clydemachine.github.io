@@ -240,12 +240,29 @@ function common.report_on_interesting_block(step_ix, interesting_blocks)
   end
 end
 
-function common.drop_if_name_matches(slot_ix, exclusions, curr_item_data)
+function common.drop_if_name_matches(slot_ix, exclusions)
   turtle.select(slot_ix)
   local curr_item_data = turtle.getItemDetail()
   if curr_item_data then
     for _, exclusion_name in ipairs(exclusions) do
       if curr_item_data["name"] == exclusion_name then
+        turtle.drop()
+        return -- No need to check the rest of the exclusions for this slot.
+      end
+    end
+  else
+    return -- No item in this slot!
+  end
+end
+
+function common.drop_if_name_doesnt_match(slot_ix, inclusions)
+  turtle.select(slot_ix)
+  local curr_item_data = turtle.getItemDetail()
+  if curr_item_data then
+    for _, inclusion_name in ipairs(inclusions) do
+      local found_item_name = curr_item_data["name"]
+      if not found_item_name == exclusion_name then
+        log(string.format("Garbage: We found %s and are dropping it.", found_item_name))
         turtle.drop()
         return -- No need to check the rest of the exclusions for this slot.
       end
@@ -263,13 +280,23 @@ function common.drop_everything()
   end
 end
 
+function common.clear_all_except_inclusions_from_inventory(inclusions)
+  if not inclusions then
+    error("You have to set inclusions before you can call common.clear_all_except_inclusions_from_inventory!")
+  end
+
+  for slot_ix = 1, 16 do
+    local result = common.drop_if_name_doesnt_match(slot_ix, inclusions)
+  end
+end
+
 -- The turtle has a limited inventory that fills up quickly.
 -- We can administratively drop items we don't want to carry.
 function common.clear_exclusions_from_inventory(exclusions)
   exclusions = exclusions or common_exclusions
 
   for slot_ix = 1, 16 do
-    local result = common.drop_if_name_matches(slot_ix, exclusions, curr_item_data)
+    local result = common.drop_if_name_matches(slot_ix, exclusions)
   end
 end
 

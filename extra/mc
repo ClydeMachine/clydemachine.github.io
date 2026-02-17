@@ -8,7 +8,15 @@ local global_step_width = 3
 local global_distance_limit = 40
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local refuelAt = 10
+local KEEP_ONLY_CERTAIN_BLOCKS = true  -- Set to false if you want to get everything but explicit exclusions!
 
+local keep_only_certain_blocks_names = {
+  "minecraft:diamond",
+  "minecraft:iron_ore",
+  "minecraft:gold_ore",
+  "minecraft:bucket",
+  "minecraft:coal",
+}
 local interesting_blocks = {
   "minecraft:diamond_ore",
   "minecraft:deepslate_diamond_ore",
@@ -169,6 +177,9 @@ function move_strategy_three_up_wide(distance_limit, step_width)
     -- And we're ready to start the next.
   end
   -- Loop completed, drop garbage then return home.
+  if KEEP_ONLY_INTERESTING_BLOCKS then
+    common.clear_all_except_inclusions_from_inventory(keep_only_certain_blocks_names)
+  end
   common.clear_exclusions_from_inventory()
   common.come_come(forward_change, facing_original_direction)
 end
