@@ -13,28 +13,20 @@ local interesting_blocks = {
   "minecraft:oil",
   "minecraft:lava",
 }
+local bucket_item_name = "minecraft:bucket"
 
 local common = require("common")
 
 -- World interaction functions
-function return_home()
-  common.log(string.format("Returning home across %s Y levels."))
-  if y_change > 1 then
-    -- We went up, go back down.
-    for i = 0, y_change do
-      turtle.down()
-    end
-    common.log("Returned to start! Stopping.")
-    return common.stop()
+
+function collect_oil()
+  -- TODO Select a bucket.
+  local could_pick_up, err = turtle.place()
+  if could_pick_up then
+    common.log("Picked up oil!")
+  else
+    common.log("Tried but failed to pick up oil! Reason: " .. err)
   end
-  if y_change < 0 then
-    -- We went down, go back up.
-    for i = 0, y_change, -1 do
-      turtle.up()
-    end
-  end
-  common.log("Requesting to return home but no y_change, stopping.")
-  return common.stop()
 end
 
 -- Check directly ahead of us for oil to pick up.
@@ -44,18 +36,29 @@ function attempt_oil_gather()
 
   if is_oil then
     -- We have oil. Do we have a bucket for it?
+    local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
+    if not did_find_bucket then
+      log("We have no bucket to use! Returning home.")
+      common.return_home()
+    end
     log("Found oil! Collecting...")
-    stop()
+    collect_oil()
   end
 
   if full_tank then
     common.log("Tank is full - returning home!")
-    return return_home()
+    return common.return_home()
   end
 end
 
 -- Given a distance limit, cover a nxn square to find and pick up liquids.
 function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width)
+  local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
+  if not did_find_bucket then
+    log("We have no bucket to use! Stopping.")
+    stop()
+  end
+
   -- On the same y_level, find oil and pick it up.
   for step = 1, distance_limit do
     common.should_refuel(global_should_refuel)
@@ -105,6 +108,10 @@ common.log("Beginning oilrig - main.")
 
 common.find_and_equip_tool()
 common.find_and_consume_fuel()
+
+-- Debugging
+common.find_and_select_matching_item(bucket_item_name, true)
+
 
 move_strategy_three_up_wide__pick_up_liquids(global_distance_limit, global_step_width)
 
