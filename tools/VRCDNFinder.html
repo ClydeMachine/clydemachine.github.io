@@ -37,10 +37,12 @@
       text-overflow: ellipsis;
     }
     .table .username-column {
-      width: 25%;
+      min-width: 200px;
+      width: 20%;
     }
     .table .rtspt-column {
-      width: 35%;
+      min-width: 430px;
+      width: 45%;
     }
     .table .mp4-column {
       width: 35%;
@@ -76,7 +78,17 @@
   <script>
     const urls = [
       'rtspt://stream.vrcdn.live/live/clydemachine',
-      'rtspt://stream.vrcdn.live/live/eiji'
+      'rtspt://stream.vrcdn.live/live/eiji',
+      'rtspt://stream.vrcdn.live/live/zaxman',
+      'rtspt://stream.vrcdn.live/live/gpot',
+      'rtspt://stream.vrcdn.live/live/jivy',
+      'rtspt://stream.vrcdn.live/live/gloomstone',
+      'rtspt://stream.vrcdn.live/live/infsq',
+      'rtspt://stream.vrcdn.live/live/botbrandon',
+      'rtspt://stream.vrcdn.live/live/term',
+      'rtspt://stream.vrcdn.live/live/fyzika',
+      'rtspt://stream.vrcdn.live/live/woodgraves',
+      'rtspt://stream.vrcdn.live/live/turels',
     ];
 
     const urlTable = document.getElementById('url-table');
@@ -94,7 +106,7 @@
       usernameCell.textContent = username;
       rtsptCell.innerHTML = `<a href="${rtsptLink}" target="_blank">${rtsptLink}</a>`;
       mp4Cell.innerHTML = `<a href="${mp4Link}" target="_blank">${mp4Link}</a>`;
-      statusCell.textContent = '⏳ Checking...';
+      statusCell.textContent = '⏳ Queued...';
 
       row.appendChild(usernameCell);
       row.appendChild(rtsptCell);
@@ -104,40 +116,78 @@
       return { row, mp4Link, statusCell };
     });
 
-    rows.forEach(({ mp4Link, statusCell }) => {
-      Promise.race([
-        fetch(mp4Link),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000))
-      ])
-        .then(response => {
+    const batchSize = 4;
+
+    const updateStatus = async () => {
+      const queue = [...rows];
+
+      const checkURL = async () => {
+        if (queue.length === 0) {
+          sortRows();
+          return;
+        }
+
+        const { mp4Link, statusCell } = queue.shift();
+
+        statusCell.textContent = '⏳ Checking...';
+
+        try {
+          await new Promise(resolve => setTimeout(resolve, Math.random() * 90 + 10));
+
+          const response = await Promise.race([
+            fetch(mp4Link),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 4000))
+          ]);
+
           if (response.ok) {
             statusCell.textContent = '🟢 Online';
             statusCell.classList.add('online');
+            statusCell.setAttribute('title', 'Online');
+            console.log(`${mp4Link} - Online`);
           } else {
             statusCell.textContent = '🔴 Offline';
             statusCell.classList.add('offline');
+            statusCell.setAttribute('title', `HTTP error! status: ${response.status}`);
+            console.log(`${mp4Link} - HTTP error! status: ${response.status}`);
           }
-        })
-        .catch(() => {
+        } catch (error) {
           statusCell.textContent = '🔴 Offline';
           statusCell.classList.add('offline');
-        });
-    });
+          statusCell.setAttribute('title', 'Offline');
+          console.log(`${mp4Link} - Offline`);
+        }
 
-    rows.sort((a, b) => {
-      const statusA = a.statusCell.textContent.includes('Online') ? 0 : 1;
-      const statusB = b.statusCell.textContent.includes('Online') ? 0 : 1;
-      if (statusA !== statusB) {
-        return statusA - statusB;
+        checkURL();
+      };
+
+      for (let i = 0; i < batchSize; i++) {
+        checkURL();
       }
-      const usernameA = a.row.children[0].textContent.toLowerCase();
-      const usernameB = b.row.children[0].textContent.toLowerCase();
-      return usernameA.localeCompare(usernameB);
-    });
+    };
+
+    const sortRows = () => {
+      rows.sort((a, b) => {
+        const statusA = a.statusCell.textContent.includes('Online') ? 0 : 1;
+        const statusB = b.statusCell.textContent.includes('Online') ? 0 : 1;
+        if (statusA !== statusB) {
+          return statusA - statusB;
+        }
+        const usernameA = a.row.children[0].textContent.toLowerCase();
+        const usernameB = b.row.children[0].textContent.toLowerCase();
+        return usernameA.localeCompare(usernameB);
+      });
+
+      urlTable.innerHTML = '';
+      rows.forEach(({ row }) => {
+        urlTable.appendChild(row);
+      });
+    };
 
     rows.forEach(({ row }) => {
       urlTable.appendChild(row);
     });
+
+    updateStatus();
   </script>
 </body>
 </html>
