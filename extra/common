@@ -66,20 +66,22 @@ function common.return_home(y_change)
   common.log(string.format("Returning home across %s Y levels.", y_change))
   if y_change > 0 then
     -- We went up, go back down.
-    for i = 0, y_change do
+    for i = 0, y_change - 1 do
       turtle.down()
     end
     common.log("Returned to start! Stopping.")
     return common.stop()
-  end
-  if y_change < 0 then
+  elseif y_change < 0 then
     -- We went down, go back up.
-    for i = 0, y_change, -1 do
+    for i = 0, y_change + 1, -1 do
       turtle.up()
     end
+  else
+    common.log("Requesting to return home but no y_change, stopping.")
+    return common.stop()
   end
-  common.log("Requesting to return home but no y_change, stopping.")
-  return common.stop()
+  common.log("Returned home!")
+  return
 end
 
 -- Emergency brake for the turtle.
