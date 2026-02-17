@@ -32,7 +32,7 @@ end
 
 function detect_any_oil_blocks(oil_block_names)
   for _, oil_block_name in ipairs(oil_block_names) do
-    if is_oil = detect_block(oil_block_name) then
+    if is_oil == detect_block(oil_block_name) then
       -- Return on first success.
       return is_oil
     end
