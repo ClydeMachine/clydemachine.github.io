@@ -87,7 +87,7 @@ function common.stop()
   turtle.turnLeft()
   turtle.turnLeft()  -- Turn the turtle around to make it obvious something is up.
   common.log("We are stopped. Emergency brake - shutting down.")
-  os.sleep(4)
+  os.sleep(120)
   os.shutdown()
 end
 
