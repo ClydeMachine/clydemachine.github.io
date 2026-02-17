@@ -168,7 +168,8 @@ function move_strategy_three_up_wide(distance_limit, step_width)
     forward_change = forward_change + 1
     -- And we're ready to start the next.
   end
-  -- Loop completed, return home.
+  -- Loop completed, drop garbage then return home.
+  common.clear_exclusions_from_inventory()
   common.come_come(forward_change, facing_original_direction)
 end
 
