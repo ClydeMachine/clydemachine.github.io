@@ -108,7 +108,7 @@ function report_on_interesting_block(step_ix)
   for k, v in pairs(blocks_surrounding) do
     for _, interesting_block in ipairs(interesting_blocks) do
       if v == interesting_block then
-        log(string.format("Block %v discovered %k after %s steps!", v, k, step_ix))
+        log(string.format("Block %s discovered %s after %s steps!", v, k, step_ix))
       end
     end
   end
