@@ -254,6 +254,14 @@ function common.drop_if_name_matches(slot_ix, exclusions, curr_item_data)
   end
 end
 
+-- Really just for manual use.
+function common.drop_everything()
+  for slot_ix = 1, 16 do
+    turtle.select(slot_ix)
+    turtle.drop()
+  end
+end
+
 -- The turtle has a limited inventory that fills up quickly.
 -- We can administratively drop items we don't want to carry.
 function common.clear_exclusions_from_inventory(exclusions)
