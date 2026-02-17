@@ -47,16 +47,12 @@ body a {
 }
 
 body a:hover {
-  color:#b59d5d;
+  color: rgba(76, 228, 245, 0.50);
 }
 
 body article a {
   color:#white;
   text-decoration:none!important;
-}
-
-body article a:hover {
-  color:#b59d5d;
 }
 
 .menubox {
@@ -98,44 +94,6 @@ body article a:hover {
   min-height:350px;
   max-height:800px;
   font-size:18px;
-}
-
-#discog {
-  display:inline-block;
-  width:275px;
-  height:auto;
-  padding-left:10px;
-  padding-right:10px;
-  position:relative;
-  margin:0px;
-  vertical-align:text-top;
-  text-align:left;
-  color:white;
-  font-size:18px;
-}
-
-#discog a {
-  color:#b59d5d;
-  transition:0.4s;
-}
-
-#discog a:hover {
-  color:#ffffff;
-}
-
-#discog div {
-  margin:0px;
-  padding:0px;
-}
-
-#discog div#underliner {
-  border-bottom:1px solid #fff;
-  margin:0px;
-  padding:0px;
-}
-
-#fullreleases, #epsonly {
-  display:none;
 }
 
 .contactinfo {
