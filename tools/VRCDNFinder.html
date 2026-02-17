@@ -51,6 +51,9 @@
     .table .status-column {
       width: 140px;
     }
+    .highlight {
+      border: 1px #ffa500;
+    }
   </style>
 </head>
 <body>
@@ -83,6 +86,7 @@
     const urlMap = {
       'Clyde Machine': 'rtspt://stream.vrcdn.live/live/clydemachine',
 
+      'CYBERCVLT': 'rtspt://stream.vrcdn.live/live/cybercvlt',
       'Aaldrik': 'rtspt://stream.vrcdn.live/live/captainaaldrik',
       'drewroses': 'rtspt://stream.vrcdn.live/live/drewroses',
       'Narshwhal': 'rtspt://stream.vrcdn.live/live/narshwhal',
@@ -217,12 +221,42 @@
       }
     };
 
+    const highlightAndMoveRow = (username) => {
+      const decodedUsername = decodeURIComponent(username);
+      const rowIndex = rows.findIndex(row => row.row.children[0].textContent === decodedUsername);
+      if (rowIndex !== -1) {
+        const highlightedRow = rows[rowIndex];
+        highlightedRow.row.classList.add('highlight');
+        rows.splice(rowIndex, 1);
+        rows.unshift(highlightedRow);
+        renderTable();
+      }
+    };
+
+    const renderTable = () => {
+      urlTable.innerHTML = '';
+      rows.forEach(({ row }) => {
+        urlTable.appendChild(row);
+      });
+    };
+
+    const getQueryParam = (param) => {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    };
+
     rows.forEach(({ row }) => {
       urlTable.appendChild(row);
     });
 
     // Table is sorted alphabetically on first load. This will change as statuses are updated.
     sortRowsAlphabetically();
+
+    const highlightUsername = getQueryParam('u');
+    if (highlightUsername) {
+      const decodedUsername = decodeURIComponent(highlightUsername);
+      highlightAndMoveRow(decodedUsername);
+    }
 
     checkStatusBtn.addEventListener('click', updateStatus);
   </script>
