@@ -107,6 +107,9 @@ function report_on_interesting_block(step_ix)
     "minecraft:deepslate_diamond_ore",
     "minecraft:iron_ore",
     "minecraft:deepslate_iron_ore",
+    "minecraft:gold_ore",
+    "minecraft:deepslate_gold_ore",
+    "minecraft:coal_ore",
   }
 
   local _, forward_detail = turtle.inspect()
