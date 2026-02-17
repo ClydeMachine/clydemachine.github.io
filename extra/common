@@ -99,8 +99,22 @@ function common.find_and_consume_fuel()
   common.report_fuel_level()
 end
 
-function common.detect_block(block_name)
+function common.inspect_block(block_name)
   local has_block, data = turtle.inspect()
+  if has_block then
+    if data["name"] == block_name then
+      return true
+    else
+      -- Is a block but isn't a match.
+      return false
+    end
+  else
+    return false
+  end
+end
+
+function common.inspect_block_below(block_name)
+  local has_block, data = turtle.inspectDown()
   if has_block then
     if data["name"] == block_name then
       return true
