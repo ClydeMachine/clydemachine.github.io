@@ -221,9 +221,17 @@
       }
     };
 
+    const stripNonAlphanumeric = (str) => {
+      return str.replace(/[^a-zA-Z0-9]/g, '');
+    };
+
     const highlightAndMoveRow = (username) => {
-      const decodedUsername = decodeURIComponent(username);
-      const rowIndex = rows.findIndex(row => row.row.children[0].textContent === decodedUsername);
+      const strippedUsername = stripNonAlphanumeric(username);
+      const rowIndex = rows.findIndex(row => {
+        const cellUsername = row.row.children[0].textContent;
+        const strippedCellUsername = stripNonAlphanumeric(cellUsername);
+        return strippedCellUsername.toLowerCase() === strippedUsername.toLowerCase();
+      });
       if (rowIndex !== -1) {
         const highlightedRow = rows[rowIndex];
         highlightedRow.row.classList.add('highlight');
