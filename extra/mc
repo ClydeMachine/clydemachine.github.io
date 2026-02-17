@@ -179,6 +179,9 @@ function clear_exclusions_from_inventory()
     "minecraft:cobblestone",
     "minecraft:redstone",
     "minecraft:dirt",
+    "minecraft:diorite",
+    "minecraft:granite",
+    "minecraft:andesite",
   }
   for slot_ix = 1, 16 do
     local result = drop_if_name_matches(slot_ix, exclusions, curr_item_data)
