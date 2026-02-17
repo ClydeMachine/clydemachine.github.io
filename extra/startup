@@ -1,2 +1,3 @@
+shell.run("delete mc")
 shell.run("wget https://www.clydemachine.com/extra/mc")
 shell.run("mc")
