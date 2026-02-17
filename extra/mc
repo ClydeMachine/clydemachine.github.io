@@ -1,4 +1,4 @@
--- Version 20240420_b
+-- Version 20240420_c
 -- Purpose of this script is for a CC Tweaked Minecraft Turtle to run through
 -- a quarry and bring back all the interesting blocks. Whether they are interesting
 -- is user-defined but essentially is aimed at the user defining the blocks
@@ -6,7 +6,7 @@
 
 -- range(-56, -52) are the y-coords for diamonds apparently.
 local global_step_width = 3
-local global_distance_limit = 2
+local global_distance_limit = 20
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local refuelAt = 10
 local KEEP_ONLY_CERTAIN_BLOCKS = true  -- Set to false if you want to get everything but explicit exclusions!
