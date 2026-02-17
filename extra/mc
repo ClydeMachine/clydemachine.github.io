@@ -92,7 +92,9 @@ end
 function report_on_interesting_block(step_ix)
   local interesting_blocks = {
     "minecraft:diamond_ore",
+    "minecraft:deepslate_diamond_ore",
     "minecraft:iron_ore",
+    "minecraft:deepslate_iron_ore",
   }
 
   local _, forward_detail = turtle.inspect()
