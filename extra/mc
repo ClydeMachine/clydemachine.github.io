@@ -55,7 +55,7 @@ function drop_if_name_matches(slot_ix, exclusions, curr_item_data)
 end
 
 function handle_gravel()
-  log("Checking if we are blocked by gravel...")
+  common.log("Checking if we are blocked by gravel...")
   -- if gravel, we basically just keep mining in place til it's gone.
   -- No stack of gravel naturally spawned will be more than 10 tall.
   for gravelstep = 1, 10 do
@@ -65,7 +65,7 @@ function handle_gravel()
       turtle.suck()
     else
       -- All clear!
-      log("Possible gravel blockage resolved.")
+      common.log("Possible gravel blockage resolved.")
       break
     end
   end
@@ -77,7 +77,7 @@ function break_forward()
   turtle.suck()
   local is_blocked = turtle.detect()
   if is_blocked then
-    log("We are blocked by something!")
+    common.log("We are blocked by something!")
     handle_gravel()
     -- handle_bedrock()
   end
@@ -95,7 +95,7 @@ function break_forward_up_and_down(step_ix)
   turtle.suckDown()
   local is_blocked = turtle.detect()
   if is_blocked then
-    log("We are blocked by something!")
+    common.log("We are blocked by something!")
     handle_gravel()
     -- handle_bedrock()
   end
@@ -109,7 +109,7 @@ function break_down()
   turtle.suckDown()
   local is_blocked = turtle.detectDown()
   if is_blocked then
-    log("We are blocked by something!")
+    common.log("We are blocked by something!")
     handle_gravel()
     -- handle_bedrock()
   end
