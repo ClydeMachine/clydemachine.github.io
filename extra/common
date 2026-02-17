@@ -264,9 +264,9 @@ function common.drop_if_name_doesnt_match(slot_ix, inclusions)
       if found_item_name ~= exclusion_name then
         common.log(string.format("Garbage: We found %s and are dropping it.", found_item_name))
         turtle.drop()
-        return -- No need to check the rest of the exclusions for this slot.
       else
         common.log(string.format("Garbage: We found %s and are keeping it!", found_item_name))
+        -- No need to check the rest of the inclusions for this slot, this item is a keeper.
       end
     end
   else
