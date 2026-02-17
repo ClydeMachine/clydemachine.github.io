@@ -70,7 +70,7 @@ function common.return_home(y_change)
       turtle.down()
     end
     common.log("Returned to start! Stopping.")
-    return stop()
+    return common.stop()
   end
   if y_change < 0 then
     -- We went down, go back up.
@@ -79,7 +79,7 @@ function common.return_home(y_change)
     end
   end
   common.log("Requesting to return home but no y_change, stopping.")
-  return stop()
+  return common.stop()
 end
 
 -- Emergency brake for the turtle.
@@ -127,11 +127,11 @@ function common.should_refuel(refuel_if_low, refuel_at)
       -- Could be out of fuel.
       if turtle.getFuelLevel() < refuel_at then
         common.log("Refueling failed! Stopping.")
-        stop()
+        common.stop()
       end
     else
       common.log("Fuel level too low and not allowed to refuel, stopping.")
-      stop()
+      common.stop()
     end
   end
 end
@@ -166,8 +166,8 @@ function common.forward(steps)
     end
 
     -- TODO Actually handle the collision.
-    stop()
-    return false  -- Won't actually return if we stop()
+    common.stop()
+    return false  -- Won't actually return if we common.stop()
   else
     return true
   end
@@ -183,8 +183,8 @@ function common.down(steps)
       common.log("Could not move down after " .. steps .. " steps.")
     end
     -- TODO Actually handle the collision.
-    stop()
-    return false  -- Won't actually return if we stop()
+    common.stop()
+    return false  -- Won't actually return if we common.stop()
   else
     return true
   end
