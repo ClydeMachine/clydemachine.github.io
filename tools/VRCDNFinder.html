@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>VRCDN Finder - Find all your friends' VRCDN links!</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.0/dist/cyborg/bootstrap.min.css">
+  <style>
+    .container {
+      margin-top: 50px;
+    }
+    .online {
+      color: #00ff00;
+    }
+    .offline {
+      color: #ff0000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="text-center mb-4">VRCDN Finder - Find all your friends' VRCDN links!</h1>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>RTSPT Link</th>
+            <th>MP4 Preview Link</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="url-table">
+          <!-- URLs will be dynamically added here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const urls = [
+      'rtspt://stream.vrcdn.live/live/clydemachine',
+      'rtspt://stream.vrcdn.live/live/eiji'
+    ];
+
+    const urlTable = document.getElementById('url-table');
+
+    const rows = urls.map(rtsptLink => {
+      const username = rtsptLink.split('/').pop();
+      const mp4Link = `https://stream.vrcdn.live/live/${username}.live.mp4`;
+
+      const row = document.createElement('tr');
+      const usernameCell = document.createElement('td');
+      const rtsptCell = document.createElement('td');
+      const mp4Cell = document.createElement('td');
+      const statusCell = document.createElement('td');
+
+      usernameCell.textContent = username;
+      rtsptCell.innerHTML = `<a href="${rtsptLink}" target="_blank">${rtsptLink}</a>`;
+      mp4Cell.innerHTML = `<a href="${mp4Link}" target="_blank">${mp4Link}</a>`;
+      statusCell.textContent = '⏳ Checking...';
+
+      row.appendChild(usernameCell);
+      row.appendChild(rtsptCell);
+      row.appendChild(mp4Cell);
+      row.appendChild(statusCell);
+
+      return { row, mp4Link, statusCell };
+    });
+
+    rows.forEach(({ mp4Link, statusCell }) => {
+      Promise.race([
+        fetch(mp4Link),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 2000))
+      ])
+        .then(response => {
+          if (response.ok) {
+            statusCell.textContent = '🟢 Online';
+            statusCell.classList.add('online');
+          } else {
+            statusCell.textContent = '🔴 Offline';
+            statusCell.classList.add('offline');
+          }
+        })
+        .catch(() => {
+          statusCell.textContent = '🔴 Offline';
+          statusCell.classList.add('offline');
+        });
+    });
+
+    rows.sort((a, b) => {
+      const statusA = a.statusCell.textContent.includes('Online') ? 0 : 1;
+      const statusB = b.statusCell.textContent.includes('Online') ? 0 : 1;
+      if (statusA !== statusB) {
+        return statusA - statusB;
+      }
+      const usernameA = a.row.children[0].textContent.toLowerCase();
+      const usernameB = b.row.children[0].textContent.toLowerCase();
+      return usernameA.localeCompare(usernameB);
+    });
+
+    rows.forEach(({ row }) => {
+      urlTable.appendChild(row);
+    });
+  </script>
+</body>
+</html>
