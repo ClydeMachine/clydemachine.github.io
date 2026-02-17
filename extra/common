@@ -114,15 +114,11 @@ function common.inspect_block(block_name)
 end
 
 function common.inspect_block_below(block_name)
-  local has_block, data = turtle.inspectDown()
-  if has_block then
-    if data["name"] == block_name then
-      return true
-    else
-      -- Is a block but isn't a match.
-      return false
-    end
+  local _, data = turtle.inspectDown()
+  if data and data["name"] == block_name then
+    return true
   else
+    -- Is a block but isn't a match.
     return false
   end
 end

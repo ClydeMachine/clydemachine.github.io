@@ -35,19 +35,20 @@ end
 
 function detect_any_oil_blocks(oil_block_names)
   for _, oil_block_name in ipairs(oil_block_names) do
-    if is_oil == common.inspect_block_below(oil_block_name) then
+    log("Checking oil_block_name " .. oil_block_name)
+    if common.inspect_block_below(oil_block_name) then
       -- Return on first success.
-      return is_oil
+      log("Detected a match for " .. oil_block_name .. "!")
+      return true
     end
   end
   -- No matches, not oil.
+  log("Block below is not oil.")
   return false
 end
 
 -- Check directly ahead of us for oil to pick up.
-function attempt_oil_gather(debug)
-  -- TODO Remove as unused?
-  debug = debug or false
+function attempt_oil_gather()
   local is_oil = detect_any_oil_blocks(interesting_blocks)
 
   if is_oil then
@@ -55,7 +56,7 @@ function attempt_oil_gather(debug)
     local did_find_bucket = common.find_and_select_matching_item(bucket_item_name)
     if not did_find_bucket then
       common.log("We have no bucket to use! Returning home.")
-      common.return_home()
+      common.return_home(y_change)
     end
     common.log("Found oil! Collecting...")
     collect_oil()
@@ -63,7 +64,7 @@ function attempt_oil_gather(debug)
 
   if full_tank then
     common.log("Tank is full - returning home!")
-    return common.return_home()
+    return common.return_home(y_change)
   end
 end
 
@@ -124,6 +125,9 @@ function move_strategy_by_layer__pick_up_liquids(distance_limit, step_width, dep
       end
     end -- Layer loop.
   end -- y_change loop.
+
+  -- If we've gotten this far we have administratively exited (limits breached). Return home.
+  common.return_home(y_change)
 end
 
 common.log("Beginning oilrig - main.")
