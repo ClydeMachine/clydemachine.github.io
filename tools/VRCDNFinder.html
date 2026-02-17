@@ -84,6 +84,7 @@
       'Ayachii': 'rtspt://stream.vrcdn.live/live/ayachii',
       'Haaylo': 'rtspt://stream.vrcdn.live/live/halo',
       'Clyde Machine': 'rtspt://stream.vrcdn.live/live/clydemachine',
+      'ky3u': 'rtspt://stream.vrcdn.live/live/ky3u',
       'Eiji': 'rtspt://stream.vrcdn.live/live/eiji',
       'Zaxman': 'rtspt://stream.vrcdn.live/live/zaxman',
       'Gpot': 'rtspt://stream.vrcdn.live/live/gpot',
@@ -96,6 +97,7 @@
       'Woodgraves': 'rtspt://stream.vrcdn.live/live/woodgraves',
       'Turels': 'rtspt://stream.vrcdn.live/live/turels',
       'Giga Strawby': 'rtspt://stream.vrcdn.live/live/musicenjoyer',
+      '????': 'rtspt://stream.vrcdn.live/live/vrcdn_3a9d0942-4a96-4d96-8375-5b667c48b927p',
     };
 
     const urlTable = document.getElementById('url-table');
@@ -146,7 +148,7 @@
 
           const response = await Promise.race([
             fetch(mp4Link),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 8000))
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 10000))
           ]);
 
           if (response.ok) {
