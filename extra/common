@@ -155,6 +155,26 @@ function common.report_on_interesting_block(step_ix, interesting_blocks)
   end
 end
 
+-- The turtle has a limited inventory that fills up quickly.
+-- We can administratively drop items we don't want to carry.
+function common.clear_exclusions_from_inventory(exclusions)
+  local common_exclusions = {
+    "minecraft:tuff",
+    "minecraft:cobbled_deepslate",
+    "minecraft:cobblestone",
+    "minecraft:redstone",
+    "minecraft:dirt",
+    "minecraft:diorite",
+    "minecraft:granite",
+    "minecraft:andesite",
+  }
+  exclusions = exclusions or common_exclusions
+
+  for slot_ix = 1, 16 do
+    local result = drop_if_name_matches(slot_ix, exclusions, curr_item_data)
+  end
+end
+
 function common.forward(steps)
   steps = steps or nil
   local could_move = turtle.forward()
