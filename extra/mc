@@ -22,19 +22,27 @@ end
 
 local refuelAt = 10
 
-function should_refuel(should_refuel)
+function find_and_consume_fuel()
+  for i = 1, 16 do
+    turtle.select(i)
+    local attempt, err = turtle.refuel()
+  end
+end
+
+function should_refuel(refuel_if_low)
   local curr_fuel_level = turtle.getFuelLevel()
   if curr_fuel_level < refuelAt then
     print("Need to refuel, level is at " .. curr_fuel_level)
 
     -- Need to refuel - should it happen now or later?
-    if should_refuel then
+    if refuel_if_low then
       print("Refueling!")
-      local refuel_result, err = turtle.refuel()
-      if refuel_result then
-        print("Refueled to " .. turtle.getFuelLevel())
-      else
-        printError(err)
+      find_and_consume_fuel()
+      print("Refueled to " .. turtle.getFuelLevel())
+      -- Could be out of fuel.
+      if turtle.getFuelLevel() < refuelAt then
+        print("Refueling failed! Stopping.")
+        stop()
       end
     else
       print("No need to refuel, already at " .. curr_fuel_level)
@@ -98,6 +106,7 @@ end
 function move_strategy_nascar(limit)
   -- step can be analogous to one Y level if you only go down once.
   for step = 1, limit do
+    should_refuel(true)
     turtle.turnLeft()
     break_forward()
     break_forward()
@@ -113,8 +122,6 @@ print("Beginning MC - main.")
 
 find_and_equip_tool()
 
-for iter = 1, 100 do
-  should_refuel(true)
-  move_strategy_nascar(32)
-end
+move_strategy_nascar(32)
+
 print("Exiting MC.")
