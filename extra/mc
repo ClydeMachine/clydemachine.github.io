@@ -3,6 +3,8 @@
 -- is user-defined but essentially is aimed at the user defining the blocks
 -- to ignore (leave as entities) and bring back everything else.
 
+local global_step_width = 2
+
 print("Beginning MC.")
 
 -- Functions lib
@@ -102,7 +104,7 @@ function break_down()
   turtle.down()
 end
 
--- Move in a square and clear blocks out.
+-- Move in a square and clear blocks out. 3x3
 function move_strategy_nascar(limit)
   -- step can be analogous to one Y level if you only go down once.
   for step = 1, limit do
@@ -114,6 +116,30 @@ function move_strategy_nascar(limit)
   end
 end
 
+function move_strategy_large_steps(y_limit, step_width)
+  -- step can be analogous to one Y level if you only go down once per step.
+  for step = 1, y_limit do
+    should_refuel(true)
+    turtle.turnLeft()  -- Place down facing the wall, it turns left to work first step
+    for leftward = 1, step_width do
+      break_forward()
+    end
+    -- We are now at the end of a step, facing left of where we started.
+    turtle.turnRight() -- Facing forward once again
+    break_forward() -- Now standing over the next step.
+    break_down() -- Break and step down for the rightward step start.
+    turtle.turnRight() -- Face down the rightward step.
+    for rightward = 1, step_width do
+      break_forward()
+    end
+    -- We are now facing right of where we started.
+    turtle.turnLeft()
+    break_forward() -- Now over the next leftward step.
+    break_down() -- Break and step down to the next leftward step.
+    -- And we're ready to start the next.
+  end
+end
+
 print("Beginning MC - main.")
 
 -- Main loop goes here
@@ -122,6 +148,7 @@ print("Beginning MC - main.")
 
 find_and_equip_tool()
 
-move_strategy_nascar(32)
+-- move_strategy_nascar(32)
+move_strategy_large_steps(1000, global_step_width)
 
 print("Exiting MC.")
