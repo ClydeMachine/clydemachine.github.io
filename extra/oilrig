@@ -4,9 +4,9 @@
 
 -- Example oil location: x=45, z=708, y=62
 
-local global_step_width = 2 -- How far left and right it will search on each layer.
-local global_distance_limit = 2 -- How long that layer is. Doesn't have to be square!
-local global_depth_limit = -20 -- How much y_change should occur at max. Must match the direction. (negative/down)
+local global_step_width = 3 -- How far left and right it will search on each layer.
+local global_distance_limit = 3 -- How long that layer is. Doesn't have to be square!
+local global_depth_limit = -3 -- How much y_change should occur at max. Must match the direction. (negative/down)
 local global_should_refuel = false -- Set to true for a big run, false to collect coal!
 local y_change = 0  -- Should be updated at every altitude change.
 
