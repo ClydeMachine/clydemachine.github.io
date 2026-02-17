@@ -18,6 +18,7 @@ local interesting_blocks = {
   "minecraft:deepslate_gold_ore",
   "minecraft:coal_ore",
 }
+local facing_original_direction = 0  -- This is to keep track of which way we are facing.
 
 local common = require("common")
 
@@ -140,25 +141,34 @@ end
 
 function move_strategy_three_up_wide(distance_limit, step_width)
   -- On the same y_level, strip mine wide and deep.
+  local forward_change = 0
   for step = 1, distance_limit do
     common.should_refuel(global_should_refuel)
     common.clear_exclusions_from_inventory_when_low_space()
     turtle.turnLeft()  -- Place down facing the wall, it turns left to work first strip
+    facing_original_direction = facing_original_direction - 1
     for leftward = 1, step_width do
       break_forward_up_and_down(step)
     end
     -- We are now at the end of a step, facing left of where we started.
     turtle.turnRight() -- Facing forward once again
+    facing_original_direction = facing_original_direction + 1
     break_forward_up_and_down(step) -- Now standing over the next step.
+    forward_change = forward_change += 1
     turtle.turnRight() -- Face down the rightward step.
+    facing_original_direction = facing_original_direction + 1
     for rightward = 1, step_width do
       break_forward_up_and_down(step)
     end
     -- We are now facing right of where we started.
     turtle.turnLeft()
+    facing_original_direction = facing_original_direction - 1
     break_forward_up_and_down(step) -- Now over the next leftward step.
+    forward_change = forward_change + 1
     -- And we're ready to start the next.
   end
+  -- Loop completed, return home.
+  common.come_come(forward_change, facing_original_direction)
 end
 
 common.log("Beginning MC - main.")
