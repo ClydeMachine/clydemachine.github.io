@@ -80,6 +80,38 @@ function stop()
   os.shutdown()
 end
 
+function detect_gravel()
+  local gravel_block_name = "minecraft:gravel"
+  local has_block, data = turtle.inspect()
+  if has_block then
+    -- Could be gravel!
+    if data["name"] == gravel_block_name then
+      return true
+    else
+      -- Is a block but isn't gravel...?
+      return false
+    end
+  else
+    return false
+  end
+end
+
+function handle_gravel()
+  print("Checking if we are blocked by gravel...")
+  -- if gravel, we basically just keep mining in place til it's gone.
+  -- No stack of gravel naturally spawned will be more than 10 tall.
+  for gravelstep = 1, 10 do
+    os.sleep(1)  -- Wait a moment if gravel was falling.
+    if detect_gravel() then
+      turtle.dig("left")
+      turtle.suck()
+    else
+      -- All clear!
+      break
+    end
+  end
+end
+
 function break_forward()
   turtle.dig("left") -- Always use left tool.
   turtle.digUp("left") -- Dig up so a human can follow along.
@@ -102,9 +134,9 @@ function break_forward_up_and_down()
   turtle.suckDown()
   local is_blocked = turtle.detect()
   if is_blocked then
-    print("We are blocked by something we couldn't break!")
-    -- Suppose we hit gravel? We can keep digging but need to keep track
-    -- of whether we successfully moved or not.
+    print("We are blocked by something!")
+    handle_gravel()
+    -- handle_bedrock()
   end
   -- Not blocked - move forward.
   turtle.forward()
