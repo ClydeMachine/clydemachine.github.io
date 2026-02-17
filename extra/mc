@@ -1,4 +1,4 @@
--- Version 20240420_a
+-- Version 20240420_b
 -- Purpose of this script is for a CC Tweaked Minecraft Turtle to run through
 -- a quarry and bring back all the interesting blocks. Whether they are interesting
 -- is user-defined but essentially is aimed at the user defining the blocks
@@ -12,17 +12,16 @@ local refuelAt = 10
 local KEEP_ONLY_CERTAIN_BLOCKS = true  -- Set to false if you want to get everything but explicit exclusions!
 
 local keep_only_certain_blocks_names = {
+  "minecraft:coal",
+  "minecraft:coal_ore",
   "minecraft:diamond",
   "minecraft:diamond_ore",
-  -- "minecraft:raw_copper",
   "minecraft:raw_gold",
   "minecraft:raw_iron",
-  -- "minecraft:raw_silver",
   "minecraft:gold_ore",
   "minecraft:iron_ore",
   "minecraft:bucket",
-  "minecraft:coal",
-  "minecraft:coal_ore",
+
 }
 local interesting_blocks = {
   "minecraft:diamond_ore",
