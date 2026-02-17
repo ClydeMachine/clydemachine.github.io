@@ -1,4 +1,8 @@
+-- To run this on a turtle delete startup then run
+-- wget https://www.clydemachine.com/extra/startup
+shell.run("delete common")
 shell.run("delete mc")
+shell.run("delete oilrig")
 shell.run("wget https://www.clydemachine.com/extra/common")
 shell.run("wget https://www.clydemachine.com/extra/mc")
 shell.run("wget https://www.clydemachine.com/extra/oilrig")
